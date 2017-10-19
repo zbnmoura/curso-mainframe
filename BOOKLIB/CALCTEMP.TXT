@@ -1,0 +1,29 @@
+      *----------------------------------------------------------------*
+      *          BOOK DO ARQUIVO     - GPGO0203                        *
+      *          NOME DO BOOK        - CALCTEMP                        *
+      *          NOME DO PDS         - GP.GPGO02.BOOKLIB               *
+      *          NOME DO ARQUIVO     - CALCTEMP                        *
+      *          TAMANHO DO ARQUIVO  -                                 *
+      *----------------------------------------------------------------*
+       9000-CALCULA-TEMPO-PROC.
+           ACCEPT WS-HORARIO-FINAL FROM TIME
+           COMPUTE WS-DIFERENCA = ( WS-HORA-F * 360000 +
+                                    WS-MIN-F  * 6000   +
+                                    WS-SEG-F  * 100    +
+                                    WS-CENT-F )        -
+                                  ( WS-HORA-I * 360000 +
+                                    WS-MIN-I  * 6000   +
+                                    WS-SEG-I  * 100    +
+                                    WS-CENT-I )
+           COMPUTE WS-HORA-P = WS-DIFERENCA / 360000
+           COMPUTE WS-DIFERENCA = WS-DIFERENCA - WS-HORA-P * 360000
+           COMPUTE WS-MIN-P = WS-DIFERENCA / 6000
+           COMPUTE WS-DIFERENCA = WS-DIFERENCA - WS-MIN-P * 6000
+           COMPUTE WS-SEG-P = WS-DIFERENCA / 100
+           COMPUTE WS-DIFERENCA = WS-DIFERENCA - WS-SEG-P * 100
+           COMPUTE WS-CENT-P = WS-DIFERENCA
+           MOVE WS-HORA-P                  TO WS-HORA-PF
+           MOVE WS-MIN-P                   TO WS-MIN-PF
+           MOVE WS-SEG-P                   TO WS-SEG-PF
+           MOVE WS-CENT-P                  TO WS-CENT-PF
+           .

@@ -1,0 +1,20 @@
+//GPXXNNE9  JOB  BRUNO,CLASS=A,MSGCLASS=X,NOTIFY=GPAZ99,TIME=(0,20)     00010000
+//*****************************************************************     00020000
+//STEP001   EXEC PGM=IDCAMS                                             00030000
+//SYSPRINT  DD   SYSOUT=*                                               00040000
+//SYSIN     DD  *                                                       00050001
+ DELETE GP.GPAZ99.VCADPRD PURGE CLUSTER                                 00060000
+ IF  MAXCC = 8 THEN SET MAXCC=0                                         00070001
+ DEFINE CLUSTER                                   -                     00080001
+     (NAME (GP.GPAZ99.VCADPRD)                    -                     00090001
+      VOL (PR39T7)                                -                     00100001
+      TRK (1,1)                                   -                     00110001
+      RECORDSIZE (69,69)                          -                     00120001
+      KEYS (04,0)                                 -                     00130001
+      SHAREOPTIONS (2,3))                         -                     00140001
+      DATA(NAME(GP.GPAZ99.VCADPRD.DATA))          -                     00150001
+      INDEX(NAME(GP.GPAZ99.VCADPRD.INDEX))                              00160000
+//STEP002   EXEC PGM=EEXXNN08                                           00170000
+//CADPRD    DD  DSN=GP.GPAZ99.CADPRD,DISP=SHR                           00180001
+//VCADPRD   DD  DSN=GP.GPAZ99.VCADPRD,DISP=SHR                          00190001
+//********************************************************************* 00200000

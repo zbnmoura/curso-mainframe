@@ -1,0 +1,22 @@
+      *----------------------------------------------------------------*
+      *          BOOK DO ARQUIVO     - GPGO0204                        *
+      *          NOME DO BOOK        - CLISP                           *
+      *          NOME DO PDS         - GP.GPGO02.BOOKLIB               *
+      *          NOME DO ARQUIVO     - CLISP                           *
+      *          TAMANHO DO ARQUIVO  - 94 BYTES                        *
+      *          DESCRICAO:                                            *
+      *             01 CLIENTES DE SAO PAULO                           *
+      *             05 CPF DO CLIENTE                                  *
+      *             05 NOME DO CLIENTE                                 *
+      *             05 ENDERECO DO CLIENTE                             *
+      *             05 TELEFONE DO CLIENTE                             *
+      *             05 TOTAL DE COMPRAS DO CLIENTE                     *
+      *             05 ULTIMA COMPRA DO CLIENTE                        *
+      *----------------------------------------------------------------*
+       01  ::REG-CLISP.
+           05 ::CPFCLI-SP                   PIC X(011).
+           05 ::NOMECLI-SP                  PIC X(025).
+           05 ::ENDCLI-SP                   PIC X(030).
+           05 ::FONECLI-SP                  PIC X(010).
+           05 ::TOTALCOMPRAS-SP             PIC 9(008)V99.
+           05 ::ULTIMACOMPRA-SP             PIC X(008).

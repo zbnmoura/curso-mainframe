@@ -1,0 +1,375 @@
+      *----------------------------------------------------------------*
+       IDENTIFICATION                      DIVISION.
+      *----------------------------------------------------------------*
+       PROGRAM-ID.                         GPGO0204.
+       AUTHOR.                             BRUNO NEVES DE MOURA
+       DATE-WRITTEN.                       02/02/2016.
+       DATE-COMPILED.                      00/02/2016.
+       SECURITY.                           NENHUMA.
+      *----------------------------------------------------------------*
+       ENVIRONMENT                         DIVISION.
+      *----------------------------------------------------------------*
+       CONFIGURATION                       SECTION.
+      *----------------------------------------------------------------*
+       SOURCE-COMPUTER.                    L01L05.
+       OBJECT-COMPUTER.                    L01L01.
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA.
+      *----------------------------------------------------------------*
+       INPUT-OUTPUT                        SECTION.
+      *----------------------------------------------------------------*
+       FILE-CONTROL.
+           SELECT CLISP ASSIGN TO UT-S-CLISP
+           FILE STATUS IS FS-CLISP
+           .
+           SELECT CLIRJ ASSIGN TO UT-S-CLIRJ
+           FILE STATUS IS FS-CLIRJ
+           .
+           SELECT CLIMG ASSIGN TO UT-S-CLIMG
+           FILE STATUS IS FS-CLIMG
+           .
+           SELECT CLIUNIF ASSIGN TO UT-S-CLIUNIF
+           FILE STATUS IS FS-CLIUNIF
+           .
+      *----------------------------------------------------------------*
+       DATA                                DIVISION.
+      *----------------------------------------------------------------*
+       FILE                                SECTION.
+      *----------------------------------------------------------------*
+       FD  CLISP
+           LABEL RECORDS IS STANDARD
+           BLOCK CONTAINS 0 RECORDS
+           RECORDING MODE IS F
+      *    RECORD CONTAINS NN CHARACTERS
+           DATA RECORD IS REG-CLISP
+           .
+           COPY CLISP REPLACING ==::== BY ====
+           .
+       FD  CLIRJ
+           LABEL RECORDS IS STANDARD
+           BLOCK CONTAINS 0 RECORDS
+           RECORDING MODE IS F
+      *    RECORD CONTAINS NN CHARACTERS
+           DATA RECORD IS REG-CLIRJ
+           .
+           COPY CLIRJ REPLACING ==::== BY ====
+           .
+       FD  CLIMG
+           LABEL RECORD IS STANDARD
+           BLOCK CONTAINS 0 RECORDS
+           RECORDING MODE IS F
+      *    RECORD CONSTAINS NN CHARACTERS
+           DATA RECORD IS REG-CLIMG
+           .
+           COPY CLIMG REPLACING ==::== BY ====
+           .
+       FD  CLIUNIF
+           LABEL RECORD IS STANDARD
+           BLOCK CONTAINS 0 RECORDS
+           RECORDING MODE IS F
+      *    RECORD CONTAINS NN CHARACTERS
+           DATA RECORD IS REG-CLIUNIF
+           .
+           COPY CLIUNIF REPLACING ==::== BY ====
+           .
+      *----------------------------------------------------------------*
+       WORKING-STORAGE                     SECTION.
+      *----------------------------------------------------------------*
+      *==  VARIAVEL ESPELHO DO ARQ. CLISP                            ==*
+           COPY CLISP   REPLACING ==::== BY ==WS-==
+           .
+      *==  VARIAVEL ESPELHO DO ARQ. CLIRJ                            ==*
+           COPY CLIRJ   REPLACING ==::== BY ==WS-==
+           .
+      *==  VARIAVEL ESPELHO DO ARQ. CLIMG                            ==*
+           COPY CLIMG   REPLACING ==::== BY ==WS-==
+           .
+      *==  VARIAVEL ESPELHO DO ARQ. CLIUNIF                          ==*
+           COPY CLIUNIF REPLACING ==::== BY ==WS-==
+           .
+      *==  VARIAVEL DE DATA                                          ==*
+           COPY VARDATA
+           .
+      *==  VARIAVEL DE TEMPO                                         ==*
+           COPY VARTEMPO
+           .
+      *==  VARIAVEIS DE FILE STATUS                                  ==*
+       77  FS-CLISP                        PIC X(002).
+       77  FS-CLIRJ                        PIC X(002).
+       77  FS-CLIMG                        PIC X(002).
+       77  FS-CLIUNIF                      PIC X(002).
+      *==  VARIAVEIS CONTADORAS                                      ==*
+       77  WS-CTLIDO-SP                    PIC 9(004) COMP.
+       77  WS-CTLIDO-RJ                    PIC 9(004) COMP.
+       77  WS-CTLIDO-MG                    PIC 9(004) COMP.
+       77  WS-CTGRAV-UNIF                  PIC 9(004) COMP.
+       77  WS-CTREJ                        PIC 9(004) COMP.
+      *== VARIAVEIS CONTADORAS FORMATADAS                            ==*
+       77  WS-CTLIDO-SP-F                  PIC Z(003)9.
+       77  WS-CTLIDO-RJ-F                  PIC Z(003)9.
+       77  WS-CTLIDO-MG-F                  PIC Z(003)9.
+       77  WS-CTGRAV-UNIF-F                PIC Z(003)9.
+       77  WS-CTREJ-F                      PIC Z(003)9.
+      *==  VARIAVEIS AUXILIARES                                      ==*
+       01  WS-DADOS-ENVIADOS.
+           05 WS-CPF                       PIC X(011).
+           05 WS-RESP                      PIC X(001).
+       77  WS-FS                           PIC X(002).
+       77  WS-MSG                          PIC X(045).
+      *==  VARIAVEL DE REGISTRO UNIFICADO FORMATADO                  ==*
+       01  WS-REG-CLIUNIF-F.
+           05 WS-CPFCLI-F.
+              10 WS-NUMCPF-F               PIC 999.999.999.
+              10 FILLER                    PIC X(01)
+                                                   VALUE '-'.
+              10 WS-DIGITOCPF-F            PIC 9(002).
+           05 WS-NOMECLI-F                 PIC X(025).
+           05 WS-ENDCLI-F                  PIC X(030).
+           05 WS-FONECLI-F.
+              10 WS-DDD-F                  PIC 9(002).
+              10 FILLER                    PIC X(001)
+                                                   VALUE '-'.
+              10 WS-FONE-PARTE1-F          PIC X(004).
+              10 FILLER                    PIC X(001)
+                                                   VALUE '-'.
+              10 WS-FONE-PARTE2-F          PIC X(004).
+           05 WS-TOTALCOMPRAS-F            PIC ZZ.ZZZ.ZZ9,99.
+           05 WS-ULTIMACOMPRA-F.
+              10 WS-DIA-ULTIMACOMPRA-F     PIC 9(002).
+              10 FILLER                    PIC X(001)
+                                                   VALUE '/'.
+              10 WS-MES-ULTIMACOMPRA-F     PIC X(003).
+              10 FILLER                    PIC X(001)
+                                                   VALUE '/'.
+              10 WS-ANO-ULTIMACOMPRA-F     PIC 9(004).
+      *==     VARIAVEL DO PROGRAMA A SER CHAMADO                     ==*
+       77 WS-PGMAUX01                      PIC X(008)
+                                                   VALUE 'PGMAUX01'.
+
+      *----------------------------------------------------------------*
+       LINKAGE                             SECTION.
+      *----------------------------------------------------------------*
+      *== SECAO INUTILIZADA                                          ==*
+      *----------------------------------------------------------------*
+       PROCEDURE                           DIVISION.
+      *----------------------------------------------------------------*
+       0000-GPGO0204.
+           PERFORM 1000-INICIALIZAR
+           PERFORM 2000-PROCESSAR
+                   UNTIL FS-CLISP EQUAL "10"
+                   AND   FS-CLIRJ EQUAL "10"
+                   AND   FS-CLIMG EQUAL "10"
+           PERFORM 3000-TERMINO
+           STOP RUN
+           .
+       1000-INICIALIZAR.
+           ACCEPT WS-HORARIO-INICIAL FROM TIME
+           MOVE 0                          TO WS-CTLIDO-SP
+                                              WS-CTLIDO-RJ
+                                              WS-CTLIDO-MG
+                                              WS-CTGRAV-UNIF
+                                              WS-CTREJ
+      *==  ABRINDO ARQUVIO INPUTS E CONDICIONANDO EM ROTINAS DE ERRO ==*
+           OPEN INPUT CLISP
+           IF FS-CLISP NOT EQUAL "00"
+              MOVE "ERRO ABERTURA CLISP"   TO WS-MSG
+              MOVE FS-CLISP                TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           OPEN INPUT CLIRJ
+           IF FS-CLIRJ NOT EQUAL "00"
+              MOVE "ERRO ABERTURA CLIRJ"   TO WS-MSG
+              MOVE FS-CLIRJ                TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           OPEN INPUT CLIMG
+           IF FS-CLIMG NOT EQUAL "00"
+              MOVE "ERRO ABERTURA CLIMG"   TO WS-MSG
+              MOVE FS-CLIMG                TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           OPEN OUTPUT CLIUNIF
+           IF FS-CLIUNIF NOT EQUAL "00"
+              MOVE "ERRO ABERTURA CLIUNIF" TO WS-MSG
+              MOVE FS-CLIUNIF              TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           PERFORM 1100-LER-CLISP
+           PERFORM 1200-LER-CLIRJ
+           PERFORM 1300-LER-CLIMG
+           .
+       1100-LER-CLISP.
+           READ CLISP INTO WS-REG-CLISP
+           IF FS-CLISP EQUAL "00"
+              COMPUTE WS-CTLIDO-SP = WS-CTLIDO-SP + 1
+           ELSE
+              IF FS-CLISP EQUAL "10"
+                 MOVE HIGH-VALUES          TO WS-CPFCLI-SP
+              ELSE
+                 MOVE "ERRO NA LEITURA!"   TO WS-MSG
+                 MOVE FS-CLISP             TO WS-FS
+                 GO TO 9999-ERRO
+              END-IF
+           END-IF
+           .
+       1200-LER-CLIRJ.
+           READ CLIRJ INTO WS-REG-CLIRJ
+           IF FS-CLISP EQUAL "00"
+              COMPUTE WS-CTLIDO-RJ = WS-CTLIDO-RJ + 1
+           ELSE
+              IF FS-CLIRJ EQUAL "10"
+                 MOVE HIGH-VALUES          TO WS-CPFCLI-RJ
+              ELSE
+                 MOVE "ERRO NA LEITURA!"   TO WS-MSG
+                 MOVE FS-CLIRJ             TO WS-FS
+                 GO TO 9999-ERRO
+              END-IF
+           END-IF
+           .
+       1300-LER-CLIMG.
+           READ CLIMG INTO WS-REG-CLIMG
+           IF FS-CLIMG EQUAL "00"
+              COMPUTE WS-CTLIDO-MG = WS-CTLIDO-MG + 1
+           ELSE
+              IF FS-CLIMG EQUAL "10"
+                 MOVE HIGH-VALUES          TO WS-CPFCLI-MG
+              ELSE
+                 MOVE "ERRO NA LEITURA!"   TO WS-MSG
+                 MOVE FS-CLIMG             TO WS-FS
+                 GO TO 9999-ERRO
+              END-IF
+           END-IF
+           .
+       2000-PROCESSAR.
+           IF WS-CPFCLI-SP < WS-CPFCLI-RJ
+           AND WS-CPFCLI-SP < WS-CPFCLI-MG
+              MOVE WS-REG-CLISP            TO WS-REG-CLIUNIF
+              PERFORM 2100-GRAVAR-CLIUNIF
+              PERFORM 1100-LER-CLISP
+           ELSE
+              IF WS-CPFCLI-RJ < WS-CPFCLI-MG
+                 MOVE WS-REG-CLIRJ         TO WS-REG-CLIUNIF
+                 PERFORM 2100-GRAVAR-CLIUNIF
+                 PERFORM 1200-LER-CLIRJ
+              ELSE
+                 MOVE WS-REG-CLIMG             TO WS-REG-CLIUNIF
+                 PERFORM 2100-GRAVAR-CLIUNIF
+                 PERFORM 1300-LER-CLIMG
+              END-IF
+           END-IF
+           .
+       2100-GRAVAR-CLIUNIF.
+           MOVE WS-CPFCLI-UNIF             TO WS-CPF
+           MOVE SPACES                     TO WS-RESP
+           CALL WS-PGMAUX01 USING WS-DADOS-ENVIADOS
+           CANCEL WS-PGMAUX01
+           IF WS-RESP EQUAL "0"
+              WRITE REG-CLIUNIF FROM WS-REG-CLIUNIF
+              IF FS-CLIUNIF EQUAL "00"
+                 COMPUTE WS-CTGRAV-UNIF = WS-CTGRAV-UNIF + 1
+              ELSE
+                 MOVE "ERRO NA GRAVACAO!!!"   TO WS-MSG
+                 MOVE FS-CLIUNIF              TO WS-FS
+                 GO TO 9999-ERRO
+              END-IF
+           ELSE
+              COMPUTE WS-CTREJ = WS-CTREJ + 1
+              MOVE WS-CPFCLI-UNIF(01:09)      TO WS-NUMCPF-F
+              MOVE WS-CPFCLI-UNIF(10:02)      TO WS-DIGITOCPF-F
+              MOVE WS-NOMECLI-UNIF            TO WS-NOMECLI-F
+              MOVE WS-ENDCLI-UNIF             TO WS-ENDCLI-F
+              MOVE WS-FONECLI-UNIF(01:02)     TO WS-DDD-F
+              MOVE WS-FONECLI-UNIF(03:04)     TO WS-FONE-PARTE1-F
+              MOVE WS-FONECLI-UNIF(07:04)     TO WS-FONE-PARTE2-F
+              MOVE WS-TOTALCOMPRAS-UNIF       TO WS-TOTALCOMPRAS-F
+              MOVE WS-ULTIMACOMPRA-UNIF(07:02)
+                                              TO WS-DIA-ULTIMACOMPRA-F
+              MOVE WS-ULTIMACOMPRA-UNIF(01:04)
+                                              TO WS-ANO-ULTIMACOMPRA-F
+              EVALUATE WS-ULTIMACOMPRA-UNIF(05:02)
+                 WHEN 01 MOVE "JAN"           TO WS-MES-ULTIMACOMPRA-F
+                 WHEN 02 MOVE "FEV"           TO WS-MES-ULTIMACOMPRA-F
+                 WHEN 03 MOVE "MAR"           TO WS-MES-ULTIMACOMPRA-F
+                 WHEN 04 MOVE "ABR"           TO WS-MES-ULTIMACOMPRA-F
+                 WHEN 05 MOVE "MAI"           TO WS-MES-ULTIMACOMPRA-F
+                 WHEN 06 MOVE "JUN"           TO WS-MES-ULTIMACOMPRA-F
+                 WHEN 07 MOVE "JUL"           TO WS-MES-ULTIMACOMPRA-F
+                 WHEN 08 MOVE "AGO"           TO WS-MES-ULTIMACOMPRA-F
+                 WHEN 09 MOVE "SET"           TO WS-MES-ULTIMACOMPRA-F
+                 WHEN 10 MOVE "OUT"           TO WS-MES-ULTIMACOMPRA-F
+                 WHEN 11 MOVE "NOV"           TO WS-MES-ULTIMACOMPRA-F
+                 WHEN 12 MOVE "DEZ"           TO WS-MES-ULTIMACOMPRA-F
+              END-EVALUATE
+              DISPLAY
+              "**************************************************"
+              DISPLAY
+              "*           CLIENTE COM CPF REJEITADO            *"
+              DISPLAY
+              "**************************************************"
+              DISPLAY "C.P.F         : "    WS-CPFCLI-F
+              DISPLAY "NOME          : "    WS-NOMECLI-F
+              DISPLAY "ENDERECO      : "    WS-ENDCLI-F
+              DISPLAY "TELEFONE      : "    WS-FONECLI-F
+              DISPLAY "COMPRAS       : R$ " WS-TOTALCOMPRAS-F
+              DISPLAY "ULTIMA COMPRA : " WS-ULTIMACOMPRA-F
+           END-IF
+           .
+       3000-TERMINO.
+           PERFORM 9000-IMPRIME-DATA.
+           CLOSE CLISP
+           IF FS-CLISP NOT EQUAL "00"
+              MOVE "ERRO NO FECHAMENTO DO ARQUIVO CLISP!!!"
+                                           TO WS-MSG
+              MOVE FS-CLISP                TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           CLOSE CLIRJ
+           IF FS-CLIRJ NOT EQUAL "00"
+              MOVE "ERRO NO FECHAMENTO DO ARQUIVO CLIRJ!!!"
+                                           TO WS-MSG
+              MOVE FS-CLIRJ                TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           CLOSE CLIMG
+           IF FS-CLIMG NOT EQUAL "00"
+              MOVE "ERRO NO FECHAMENTO DO ARQUIVO CLIMG!!!"
+                                           TO WS-MSG
+              MOVE FS-CLIMG                TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           CLOSE CLIUNIF
+           IF FS-CLIUNIF NOT EQUAL "00"
+              MOVE "ERRO NO FECHAMENTO DO ARQUIVO CLIUNIF!!!"
+                                           TO WS-MSG
+              MOVE FS-CLIUNIF              TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           ACCEPT WS-HORARIO-FINAL FROM TIME
+           PERFORM 9000-CALCULA-TEMPO-PROC
+           MOVE WS-CTLIDO-SP               TO WS-CTLIDO-SP-F
+           MOVE WS-CTLIDO-RJ               TO WS-CTLIDO-RJ-F
+           MOVE WS-CTLIDO-MG               TO WS-CTLIDO-MG-F
+           MOVE WS-CTGRAV-UNIF             TO WS-CTGRAV-UNIF-F
+           MOVE WS-CTREJ                   TO WS-CTREJ-F
+           DISPLAY "=================================================="
+           DISPLAY "TOTAL DE CLIENTES SP............: " WS-CTLIDO-SP-F
+           DISPLAY "TOTAL DE CLIENTES RJ............: " WS-CTLIDO-RJ-F
+           DISPLAY "TOTAL DE CLIENTES MG............: " WS-CTLIDO-MG-F
+           DISPLAY "TOTAL DE CLIENTES UNIFICADOS....: "
+                   WS-CTGRAV-UNIF-F
+           DISPLAY "TOTAL DE CLIENTES REJEITADOS....: "
+                   WS-CTREJ-F
+           DISPLAY "TEMPO TOTAL DE PROCESSAMENTO....: "
+                   WS-TEMPO-PROCESSAMENTO-F
+           DISPLAY "TERMINO NORMAL DE PROCESSAMENTO DO GPGO0204"
+           DISPLAY "=================================================="
+           .
+      *----------------------------------------------------------------*
+      *    COPYS DA BOOK
+      *----------------------------------------------------------------*
+           COPY CALCTEMP
+           .
+           COPY ROTDATA
+           .
+           COPY ROTERRO
+           .

@@ -1,0 +1,8 @@
+//GPAZ99CS JOB BRUNO,MSGCLASS=X,CLASS=C,NOTIFY=GPAZ99,TIME=(0,25)       00010010
+//*--------------------------------------------------------------       00020001
+//STEP1    EXEC PGM=GPGO0207                                            00030001
+//STEPLIB  DD DSN=GP.GERAL.LOADLIB,DISP=SHR                             00040001
+//MOVTOEST DD DSN=GP.GPAZ99.MOVTOEST,DISP=SHR                           00050009
+//RELMOV01 DD DSN=GP.GPAZ99.RELMOV01,DISP=(OLD,CATLG,DELETE),           00060008
+//            SPACE=(TRK,(1,1),RLSE),UNIT=SYSALLDA,                     00070001
+//            DCB=(LRECL=82,RECFM=FB,DSORG=PS,BLKSIZE=0)                00080007

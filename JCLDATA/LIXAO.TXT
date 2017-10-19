@@ -1,0 +1,154 @@
+---------------------------------------------------------
+--     ENTRE A E Z
+---------------------------------------------------------
+--     SELECT NOMECLI, ALTURACLI
+--     FROM GPAZ03.TBCLI
+--     WHERE NOMECLI BETWEEN 'A%' AND 'Z%';
+---------------------------------------------------------
+--     CONCATENANDO
+---------------------------------------------------------
+--     SELECT NOMECLI ||', '|| ENDCLI
+--     FROM GPAZ03.TBCLI;
+---------------------------------------------------------
+--     INSERINDO 'TITULO'
+---------------------------------------------------------
+--     SELECT 'CODIGO=', CODCLI, 'NOME=', NOMECLI
+--     FROM GPAZ03.TBCLI;
+---------------------------------------------------------
+--     SELECT DISTINCT CODTIPOCLI
+--     FROM GPAZ03.TBCLI;
+--     SELECT DATANASCLI, DATANASCLI + 5 YEARS - 3 MONTHS + 8 DAYS
+--     FROM GPAZ03.TBCLI
+--     WHERE YEAR(DATANASCLI + 18 YEARS) < 2000;
+---------------------------------
+--     SELECT CODTIPOCLI, CODCLI, NOMECLI
+--     FROM GPAZ03.TBCLI
+--     ORDER BY CODTIPOCLI DESC, CODCLI ASC;
+--------------------------------------------
+--     SELECT  DATANASCLI, DAYS(DATANASCLI)
+--     FROM GPAZ03.TBCLI;
+--     WHERE MONTH(DATANASCLI) = MONTH(CURRENT DATE);
+--     SELECT MAX(PRECOPROD) AS "MAIS CARO"
+--     FROM GPAZ03.TBPROD;
+-------------------------------------------
+--     SELECT MAX(PRECOPROD)  AS "MAIOR",
+--            MIN(PRECOPROD)  AS "MENOR",
+--            AVG(PRECOPROD)  AS "MEDIA",
+--            COUNT(DISTINCT) AS "CONTA",
+--         SUM(PRECOPROD)   AS "SOMA"
+--     FROM GPAZ03.TBPROD;
+--     ----------------------------------------
+--     SELECT SUBSTR(NOMECLI, 3, 4)
+--     FROM GPAZ03.TBCLI;
+--     --------------
+--     SELECT VALUE(PRECOPROD, 0)
+--     FROM GPAZ03.TBPROD;
+---------------------
+--    SELECT CODTIPOPROD, MAX(PRECOPROD)
+--    FROM GPAZ03.TBPROD
+--    GROUP BY CODTIPOPROD
+--    HAVING MAX(PRECOPROD) > 40;
+-----------------------------------------------
+--    SELECT CODCLI, CODPROD, SUM(QTDEVENDA)
+--    FROM GPAZ03.TBVENDA
+--    GROUP BY CODCLI, CODPROD
+--    HAVING SUM(QTDEVENDA) > 10;
+------------------------------------------
+--    SELECT CODCLI AS CODIGO, NOMECLI AS NOME
+--    FROM TBCLI
+--    UNION
+--    SELECT CODPROD AS CODIGO, DESCPROD AS NOME
+--    FROM GPAZ03.TBPROD
+--    ORDER BY NOME;
+-----------------------------------------
+--    SELECT NOMECLI, DESCTIPOCLI
+--    FROM TBCLI, TBTIPOCLI
+----------------------------
+--    SELECT *
+--    FROM TBCLISP;
+--
+--   SELECT *
+--    FROM TBCLIRJ;
+---------------------------------
+-- 1
+--------------------------------
+--    SELECT CODCLISP, CODCLIRJ, SALDOCLIRJ
+--    FROM   TBCLISP INNER JOIN TBCLIRJ
+--    ON     CODCLISP = CODCLIRJ;
+-----------------------------------------
+-- 2
+----------------------------------------
+--    SELECT *
+--    FROM TBCLISP FULL OUTER JOIN TBCLIRJ
+--    ON CODCLISP = CODCLIRJ;
+-----------
+-- 3
+----------
+--    SELECT CODCLISP, CODCLIRJ, SALDOCLIRJ
+--    FROM TBCLISP RIGHT JOIN TBCLIRJ
+--    ON CODCLISP = CODCLIRJ;
+-------------
+-- 4
+---------
+--    SELECT CODCLISP, CODCLIRJ, SALDOCLIRJ
+--    FROM TBCLISP LEFT JOIN TBCLIRJ
+--    ON CODCLISP = CODCLIRJ
+------------
+-- 5
+-----------
+--    SELECT CODCLISP, CODCLIRJ, SALDOCLIRJ
+--    FROM TBCLISP LEFT JOIN TBCLIRJ
+--    ON CODCLISP = CODCLIRJ
+--    WHERE CODCLIRJ IS NULL;
+------------------
+-- 6
+------------------
+--    SELECT CODCLISP, CODCLIRJ, SALDOCLIRJ
+--    FROM TBCLISP RIGHT JOIN TBCLIRJ
+--    ON CODCLISP = CODCLIRJ
+--    WHERE CODCLIRJ IS NULL;
+------------
+-- 7
+-----------
+--    SELECT CODCLISP, CODCLIRJ, SALDOCLIRJ
+--    FROM TBCLISP FULL OUTER JOINT JOIN TBCLIRJ
+--    ON CODCLISP = CODCLIRJ
+--    WHERE CODCLIRJ IS NULL;
+----------
+--  EXERCICIO 18
+-----------
+--    SELECT QTDEVENDA * PRECOPROD
+--    FROM GPAZ10.TBVENDA V, GPAZ10.TBPROD P
+--    WHERE V.CODPROD = P.CODPROD AND CODCLI = 'OOO2';
+----------------------
+--  EXERCICIO 19
+--------------
+--    SELECT CODCLI,  SUM(QTDEVENDA * PRECOPROD)
+--    FROM GPAZ10.TBVENDA V, GPAZ10.TBPROD P
+--    WHERE V.CODPROD = P.CODPROD AND CODCLI = '0002' AND
+--        CODCLI = '0002' AND
+--          MONTH (DATAHORAVENDA) = MONTH(CURRENT DATE) AND
+--          YEAR(DATAHORAVENDA) = YEAR(CURRENT DATE);
+----------
+-- EXERCICO 20
+-------
+--    SELECT NOMECLI
+--    FROM GPAZ10.TBCLI
+--    WHERE CODCLI IN
+--  ( SELECT CODCLI
+--    FROM GPAZ10.TBVENDA V,GPAZ10.TBPROD P
+--    WHERE V.CODPROD = P.CODPROD AND
+--    CODTIPOPROD = '03'
+--    GROUP BY CODCLI
+--    HAVING SUM(PRECOPROD * QTDEVENDA) > 100 );
+-----------------
+--  EXERCICIO 21
+----------------
+      SELECT DESCTIPOPROD
+      FROM GPAZ10.TBCLI C, GPAZ10.TBVENDA V,
+           GPAZ10.TBPROD P, GPAZ10.TBTIPOPROD T
+      WHERE C.CODCLI = V.CODCLI AND
+            V.CODPROD = P.CODPROD AND
+            P.CODTIPOPROD = T.CODTIPOPROD AND
+            CODTIPOCLI = '03' AND
+            QTDEVENDA > 1;

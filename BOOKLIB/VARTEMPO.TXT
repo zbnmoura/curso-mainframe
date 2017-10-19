@@ -1,0 +1,45 @@
+      *----------------------------------------------------------------*
+      *          BOOK DO ARQUIVO     - GPGO0203                        *
+      *          NOME DO BOOK        - VARTEMPO                        *
+      *          NOME DO PDS         - GP.GPGO02.BOOKLIB               *
+      *          NOME DO ARQUIVO     - VARTEMPO                        *
+      *          TAMANHO DO ARQUIVO  - 42 BYTES                        *
+      *          DESCRICAO: VARIAVEIS PARA CALCULO DE TEMPO.           *
+      *----------------------------------------------------------------*
+      *==  VARIAVEL DE TEMPO INICIAL                                 ==*
+       01  WS-HORARIO-INICIAL.
+           05  WS-HORA-I                   PIC 9(002).
+           05  WS-MIN-I                    PIC 9(002).
+           05  WS-SEG-I                    PIC 9(002).
+           05  WS-CENT-I                   PIC 9(002).
+      *==  VARIAVEL DE TEMPO FINAL                                   ==*
+       01  WS-HORARIO-FINAL.
+           05  WS-HORA-F                   PIC 9(002).
+           05  WS-MIN-F                    PIC 9(002).
+           05  WS-SEG-F                    PIC 9(002).
+           05  WS-CENT-F                   PIC 9(002).
+      ******************************************************************
+      *    DESCRICAO: VARIAVEIS AUXILIARES DE TEMPO PARA CALCULO DO    *
+      *               TEMPO DE PROCESSAMENTO.                          *
+      ******************************************************************
+      *==  VARIAVEL PARA ARMAZENAR DIFERENCA ENTRE INICIO E FINAL    ==*
+       77  WS-DIFERENCA                    PIC 9(007).
+      *==  VARIAVEL PARA RECEBER TEMPO DE PROCESSAMENTO              ==*
+      *==  COM BASE NO CALCULO.                                      ==*
+       01  WS-TEMPO-PROCESSAMENTO.
+           05  WS-HORA-P                   PIC 9(002).
+           05  WS-MIN-P                    PIC 9(002).
+           05  WS-SEG-P                    PIC 9(002).
+           05  WS-CENT-P                   PIC 9(002).
+      *==  VARIAVEL DE PROCESSAMENTO FORMATADA                       ==*
+       01  WS-TEMPO-PROCESSAMENTO-F.
+           05  WS-HORA-PF                  PIC 9(002).
+           05  FILLER                      PIC X(001)
+                                                   VALUE ":".
+           05  WS-MIN-PF                   PIC 9(002).
+           05  FILLER                      PIC X(001)
+                                                   VALUE ":".
+           05  WS-SEG-PF                   PIC 9(002).
+           05  FILLER                      PIC X(001)
+                                                   VALUE ":".
+           05  WS-CENT-PF                  PIC 9(002).

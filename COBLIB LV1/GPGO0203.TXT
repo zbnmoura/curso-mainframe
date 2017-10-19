@@ -1,0 +1,182 @@
+      ******************************************************************
+      * DESCRICAO: SIMULA EMPRESTIMOS ONDE SERA GRAVADOS EM ARQUIVO    *
+      *            APENAS OS QUE FOREM APROVADOS.                      *
+      ******************************************************************
+      *----------------------------------------------------------------*
+       IDENTIFICATION                      DIVISION.
+      *----------------------------------------------------------------*
+       PROGRAM-ID.                         GPGO0203.
+       AUTHOR.                             BRUNO NEVES DE MOURA.
+       DATE-WRITTEN.                       28/01/2016.
+       DATE-COMPILED.                      29/01/2016.
+       SECURITY.                           NENHUMA.
+      *----------------------------------------------------------------*
+       ENVIRONMENT                         DIVISION.
+      *----------------------------------------------------------------*
+       CONFIGURATION                       SECTION.
+      *----------------------------------------------------------------*
+       SOURCE-COMPUTER.                    L01M05.
+       OBJECT-COMPUTER.                    L01M01.
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA.
+       INPUT-OUTPUT                        SECTION.
+       FILE-CONTROL.
+           SELECT SIMUEMP ASSIGN TO UT-S-SIMUEMP
+           FILE STATUS IS FS-SIMUEMP
+           .
+           SELECT EMPAPROV ASSIGN TO UT-S-EMPAPROV
+           FILE STATUS IS FS-EMPAPROV
+           .
+      *----------------------------------------------------------------*
+       DATA                                DIVISION.
+      *----------------------------------------------------------------*
+       FILE                                SECTION.
+      *----------------------------------------------------------------*
+       FD  SIMUEMP
+       LABEL RECORDS IS STANDARD
+       BLOCK CONTAINS 0 RECORDS
+       RECORDING MODE IS F
+       RECORD CONTAINS 18 CHARACTERS
+       DATA RECORD IS  REG-SIMUEMP
+       .
+      ******************************************************************
+      *01  REGISTRO DE SIMULACAO DE EMPRESTIMO                         *
+      *    05 NUMERO DE SIMULACAO SAIDA                                *
+      *    05 VALOR DE EMPRESTIMO SAIDA                                *
+      *    05 TAXA DE JUROS SAIDA                                      *
+      *    05 QUANTIDADE DE PARCELAS SAIDA                             *
+      ******************************************************************
+       01  REG-SIMUEMP.
+           05 NUM-SIMULACAO-S              PIC 9(004).
+           05 VAL-EMPRESTIMO-S             PIC 9(006)V99.
+           05 TX-JUROS-S                   PIC 9(002)V99.
+           05 QTD-PARCELAS-S               PIC 9(002).
+      *
+       FD  EMPAPROV
+       LABEL RECORDS IS STANDARD
+       BLOCK CONTAINS 0 RECORDS
+       RECORDING MODE IS F
+       RECORD CONTAINS 35 CHARACTERS
+       DATA RECORD IS REG-EMPAPROV
+       .
+      ******************************************************************
+      *01  EMPRESTIMO APROVADO                                         *
+      *    05 NUMERO DA SIMULACAO                                      *
+      *    05 VALOR DO EMPRESTIMO                                      *
+      *    05 TAXA DE JUROS COMPOSTO AO MES                            *
+      *    05 QUANTIDADE DE PARCELAS                                   *
+      *    05 VALOR DA PARCELA                                         *
+      *    05 VALOR TOTAL DO EMPRESTIMO                                *
+      ******************************************************************
+       01  REG-EMPAPROV.
+           05 NUM-SIMULACAO-E              PIC 9(004).
+           05 VAL-EMPRESTIMO-E             PIC 9(006)V99.
+           05 TX-JUROS-E                   PIC 9(002)V99.
+           05 QTD-PARCELAS-E               PIC 9(002)V99.
+           05 VALOR-PARCELA-E              PIC 9(006)V99.
+           05 TOTAL-EMP-E                  PIC 9(007)V99.
+]     *----------------------------------------------------------------*
+       WORKING-STORAGE                     SECTION.
+]     *----------------------------------------------------------------*
+      ******************************************************************
+      *    DESCRICAO: VARIAVEIS DE DATA QUE SERAO RECEBIDAS PELO       *
+      *               SISTEMA OPERACIONAL.                             *
+      ******************************************************************
+       01  WS-DATA-SISTEMA.
+           05  WS-ANO                      PIC 9(002).
+           05  WS-MES                      PIC 9(002).
+           05  WS-DIA                      PIC 9(002).
+      *
+       01  WS-DATA-JULIANA.
+           05  WS-ANO                      PIC 9(002).
+           05  WS-DIA                      PIC 9(003).
+      ******************************************************************
+      *    DESCRICAO: DATAS NO FORMATO JULIANA, GREGORIANA1 E          *
+      *               GREGORIANA2 PARA SAIDA.                          *
+      ******************************************************************
+       01  WS-DATA-GREGORIANA-1.
+           05  WS-DIA                      PIC 9(002).
+           05  FILLER                      PIC X(001)
+                                                   VALUE "/".
+           05  WS-MES                      PIC 9(002).
+           05  FILLER                      PIC X(003)
+                                                   VALUE "/20".
+           05  WS-ANO                      PIC 9(002).
+      *
+       01  WS-DATA-GREGORIANA-2.
+           05  WS-DIA                      PIC 9(002).
+           05  FILLER                      PIC X(004)
+                                                   VALUE " DE ".
+           05  WS-TEXTO-MES                PIC X(009).
+           05  FILLER                      PIC X(006)
+                                                   VALUE " DE 20".
+           05  WS-ANO                      PIC 9(002).
+      *
+       01  WS-DATA-JULIANA-F.
+           05  WS-DIA                      PIC Z9(002).
+           05  FILLER                      PIC X(006)
+                                                   VALUE " DE 20".
+           05  WS-ANO                      PIC 9(002).
+      ******************************************************************
+      *    DESCRICAO: VARIAVEIS DE ENTRADA E SAIDA PARA DIA DA SEMANA. *
+      ******************************************************************
+       77  WS-TEXTO-DIA-SEMANA             PIC X(013).
+       77  WS-DIA-SEMANA                   PIC 9(001).
+      ******************************************************************
+      *    DESCRICAO: VARIAVEIS CONTADORAS E MASCARAS.                 *
+      *               CONTADOR LIDOS E PROCESSADOS.                    *
+      ******************************************************************
+       77  WS-CTLIDO                       PIC 9(004).
+       77  WS-CTPROC                       PIC 9(004).
+       77  WS-CTLIDO-F                     PIC Z(004).
+       77  WS-CTPROC-F                     PIC Z(004).
+      ******************************************************************
+      *    DESCRICAO: VARIAVEIS DE AUXILIO PARA CALCULO DE TEMPO DE    *
+      *               PROCESSAMENTO.                                   *
+      ******************************************************************
+       01  WS-HORARIO-INICIAL.
+           05  WS-HORA-I                   PIC 9(002).
+           05  WS-MIN-I                    PIC 9(002).
+           05  WS-SEG-I                    PIC 9(002).
+           05  WS-CENT-I                   PIC 9(002).
+      *
+       01  WS-HORARIO-FINAL.
+           05  WS-HORA-F                   PIC 9(002).
+           05  WS-MIN-F                    PIC 9(002).
+           05  WS-SEG-F                    PIC 9(002).
+           05  WS-CENT-F                   PIC 9(002).
+      ******************************************************************
+      *    DESCRICAO: VARIAVEL PARA CALCULAR A DIFERENCA DE INICIO     *
+      *               E FINAL DE TEMPO.                                *
+      ******************************************************************
+       77  WS-DIFERENCA                    PIC 9(007).
+      ******************************************************************
+      *    DESCRICAO: VARIAVEL PARA CALCULAR TEMPO DE PROCESSAMENTO    *
+      *               E SUA RESPECTIVA SAIDA.                          *
+      ******************************************************************
+       01  WS-TEMPO-PROCESSAMENTO.
+           05  WS-HORA-P                   PIC 9(002).
+           05  WS-MIN-P                    PIC 9(002).
+           05  WS-SEG-P                    PIC 9(002).
+           05  WS-CENT-P                   PIC 9(002).
+      *
+       01  WS-TEMPO-PROCESSAMENTO-F.
+           05  WS-HORA-PF                  PIC 9(002).
+           05  FILLER                      PIC X(001)
+                                                   VALUE ":".
+           05  WS-MIN-PF                   PIC 9(002).
+           05  FILLER                      PIC X(001)
+                                                   VALUE ":".
+           05  WS-SEG-PF                   PIC 9(002).
+           05  FILLER                      PIC X(001)
+                                                   VALUE ":".
+           05  WS-CENT-PF                  PIC 9(002).
+      *----------------------------------------------------------------*
+       LINKAGE                             SECTION.
+      *----------------------------------------------------------------*
+      ******************************************************************
+      *    NAO UTILIZADA PELO PROGRAMA.                                *
+      ******************************************************************
+      *----------------------------------------------------------------*
+       PROCEDURE                           DIVISION.
+      *----------------------------------------------------------------*

@@ -1,0 +1,38 @@
+      ******************************************************************
+      * DCLGEN TABLE(TESTEDCL)                                         *
+      *        LIBRARY(GP.GPAZ02.JCLDATA(CREATET))                     *
+      *        LANGUAGE(COBOL)                                         *
+      *        QUOTE                                                   *
+      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *
+      ******************************************************************
+           EXEC SQL DECLARE TESTEDCL TABLE
+           ( CAMPO01                        CHAR(5),
+             CAMPO02                        VARCHAR(20),
+             CAMPO03                        INTEGER,
+             CAMPO04                        SMALLINT,
+             CAMPO05                        DECIMAL(10, 4),
+             CAMPO06                        FLOAT(4),
+             CAMPO07                        FLOAT,
+             CAMPO08                        DATE,
+             CAMPO09                        TIME,
+             CAMPO010                       TIMESTAMP
+           ) END-EXEC.
+      ******************************************************************
+      * COBOL DECLARATION FOR TABLE TESTEDCL                           *
+      ******************************************************************
+       01  DCLTESTEDCL.
+           10 CAMPO01              PIC X(5).
+           10 CAMPO02.
+              49 CAMPO02-LEN       PIC S9(4) USAGE COMP.
+              49 CAMPO02-TEXT      PIC X(20).
+           10 CAMPO03              PIC S9(9) USAGE COMP.
+           10 CAMPO04              PIC S9(4) USAGE COMP.
+           10 CAMPO05              PIC S9(6)V9(4) USAGE COMP-3.
+           10 CAMPO06              USAGE COMP-1.
+           10 CAMPO07              USAGE COMP-2.
+           10 CAMPO08              PIC X(10).
+           10 CAMPO09              PIC X(8).
+           10 CAMPO010             PIC X(26).
+      ******************************************************************
+      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 10      *
+      ******************************************************************

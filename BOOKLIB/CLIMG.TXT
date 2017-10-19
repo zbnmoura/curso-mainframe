@@ -1,0 +1,22 @@
+      *----------------------------------------------------------------*
+      *          BOOK DO ARQUIVO     - GPGO0204                        *
+      *          NOME DO BOOK        - CLIMG                           *
+      *          NOME DO PDS         - GP.GPGO02.BOOKLIB               *
+      *          NOME DO ARQUIVO     - CLIMG                           *
+      *          TAMANHO DO ARQUIVO  - 94 BYTES                        *
+      *          DESCRICAO:                                            *
+      *             01 CLIENTES DE MINAS GERAIS                        *
+      *             05 CPF DO CLIENTE                                  *
+      *             05 NOME DO CLIENTE                                 *
+      *             05 ENDERECO DO CLIENTE                             *
+      *             05 TELEFONE DO CLIENTE                             *
+      *             05 TOTAL DE COMPRAS DO CLIENTE                     *
+      *             05 ULTIMA COMPRA DO CLIENTE                        *
+      *----------------------------------------------------------------*
+       01  ::REG-CLIMG.
+           05 ::CPFCLI-MG                   PIC X(011).
+           05 ::NOMECLI-MG                  PIC X(025).
+           05 ::ENDCLI-MG                   PIC X(030).
+           05 ::FONECLI-MG                  PIC X(010).
+           05 ::TOTALCOMPRAS-MG             PIC 9(008)V99.
+           05 ::ULTIMACOMPRA-MG             PIC X(008).

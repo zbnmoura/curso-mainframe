@@ -1,0 +1,10 @@
+//GPAZ99CS JOB 'BRUNO',MSGCLASS=X,CLASS=C,NOTIFY=GPAZ99,TIME=(0,20)     00010099
+//*****************************************************************     00020016
+//* JOB DE COMPILACAO PROGRAMA COBOL BATCH                              00030016
+//* TROCAR AZ99 POR SEU USUARIO                                         00040099
+//*************************************************************         00080016
+// JCLLIB   ORDER=GP.LB.PROCLIB                                         00090016
+//COBCOMP  EXEC DFHCOBOL,INSTR='GPAZ99',NOME='EEXXNN08'                 00100099
+//LKED.SYSIN    DD   *                                                  00110016
+  NAME EEXXNN08(R)                                                      00120099
+/*                                                                      00130016

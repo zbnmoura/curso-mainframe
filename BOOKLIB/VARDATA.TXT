@@ -1,0 +1,45 @@
+      *----------------------------------------------------------------*
+      *          BOOK DO ARQUIVO     - GPGO0203                        *
+      *          NOME DO BOOK        - VARDATA                         *
+      *          NOME DO PDS         - GP.GPGO02.BOOKLIB               *
+      *          NOME DO ARQUIVO     - VARDATA                         *
+      *          TAMANHO DO ARQUIVO  - 68 BYTES                        *
+      *          DESCRICAO: VARIAVEIS DE DATA. JULIANA, GREGORIANA1,   *
+      *          GREGORIANA2 E DATA DO SISTEMA.                        *
+      *----------------------------------------------------------------*
+      *==  DATA DO SISTEMA E JULIANA SEM FORMATACAO                  ==*
+       01  WS-DATA-SISTEMA.
+           05  WS-ANO                      PIC 9(002).
+           05  WS-MES                      PIC 9(002).
+           05  WS-DIA                      PIC 9(002).
+       01  WS-DATA-JULIANA.
+           05  WS-ANO                      PIC 9(002).
+           05  WS-DIA                      PIC 9(003).
+      *==  DATA GREGORIANA1, GREGORIANA2 E JULIANA FORMATADAS       ==*
+       01  WS-DATA-GREGORIANA-1.
+           05  WS-DIA                      PIC 9(002).
+           05  FILLER                      PIC X(001)
+                                                   VALUE "/".
+           05  WS-MES                      PIC 9(002).
+           05  FILLER                      PIC X(003)
+                                                   VALUE "/20".
+           05  WS-ANO                      PIC 9(002).
+       01  WS-DATA-GREGORIANA-2.
+           05  WS-DIA                      PIC 9(002).
+           05  FILLER                      PIC X(004)
+                                                   VALUE " DE ".
+           05  WS-TEXTO-MES                PIC X(009).
+           05  FILLER                      PIC X(006)
+                                                   VALUE " DE 20".
+           05  WS-ANO                      PIC 9(002).
+       01  WS-DATA-JULIANA-F.
+           05  WS-DIA                      PIC Z9(002).
+           05  FILLER                      PIC X(006)
+                                                   VALUE " DE 20".
+           05  WS-ANO                      PIC 9(002).
+      ******************************************************************
+      *    DESCRICAO: VARIAVEIS REFERENTES AO DIA DA SEMANA.           *
+      ******************************************************************
+       77  WS-DIA-SEMANA                   PIC 9(001).
+      *==  POR EXTENSO                                               ==*
+       77  WS-TEXTO-DIA-SEMANA             PIC X(013).

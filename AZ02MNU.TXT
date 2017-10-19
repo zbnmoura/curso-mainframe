@@ -1,0 +1,365 @@
+AZ02MNU  DFHMSD TYPE=DSECT,                                            -
+               MODE=INOUT,                                             -
+               LANG=COBOL,                                             -
+               STORAGE=AUTO,                                           -
+               CTRL=(FREEKB,ALARM,FRSET),                              -
+               TIOAPFX=YES,                                            -
+               MAPATTS=(COLOR,HILIGHT),                                -
+               DSATTS=(COLOR,HILIGHT)
+*---------------------------------------------------------------------*
+MAPAMNU  DFHMDI SIZE=(24,80),                                          -
+               LINE=1,                                                 -
+               COLUMN=1
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(01,01),                                           -
+               LENGTH=10,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='TERMINAL.:'
+*---------------------------------------------------------------------*
+*--VARIAVEL
+T1TERM   DFHMDF POS=(01,12),                                           -
+               LENGTH=04,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(004)'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(01,33),                                           -
+               LENGTH=11,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='LOJAS BRUNO'
+*---------------------------------------------------------------------*
+*--VARIAVEL
+T1DATA   DFHMDF POS=(01,69),                                           -
+               LENGTH=10,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(010)'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(02,01),                                           -
+               LENGTH=10,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='TRANSACAO:'
+*---------------------------------------------------------------------*
+*--VARIAVEL
+T1TRAN   DFHMDF POS=(02,12),                                           -
+               LENGTH=04,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(004)'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(02,30),                                           -
+               LENGTH=20,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='CADASTRO DE PRODUTOS'
+*---------------------------------------------------------------------*
+*--VARIAVEL
+T1HORA   DFHMDF POS=(02,71),                                           -
+               LENGTH=08,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(008)'
+*=====================================================================*
+         DFHMDF POS=(03,01),                                           -
+               LENGTH=78,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               INITIAL='------------------------------------------------
+               -------------------------------'
+*=====================================================================*
+*--CONSTANTE
+         DFHMDF POS=(04,01),                                           -
+               LENGTH=05,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='TASK:'
+*---------------------------------------------------------------------*
+*--VARIAVEL
+T1TASK   DFHMDF POS=(04,07),                                           -
+               LENGTH=07,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(007)'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(04,33),                                           -
+               LENGTH=14,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='MENU PRINCIPAL'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(04,72),                                           -
+               LENGTH=05,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='FASE:'
+*---------------------------------------------------------------------*
+*--VARIAVEL
+T1FASE   DFHMDF POS=(04,78),                                           -
+               LENGTH=01,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(001)'
+*=====================================================================*
+         DFHMDF POS=(05,01),                                           -
+               LENGTH=78,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               INITIAL='------------------------------------------------
+               -------------------------------'
+*=====================================================================*
+*--CONSTANTE
+         DFHMDF POS=(07,06),                                           -
+               LENGTH=23,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='VSAM-KSDS           DB2'
+*---------------------------------------------------------------------*
+*--logo
+         DFHMDF POS=(07,43),                                           -
+               LENGTH=32,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               HILIGHT=BLINK,                                          -
+               INITIAL='  ((((c,               ,7))))  '
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(08,06),                                           -
+               LENGTH=29,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               INITIAL='-------------   -------------'
+*---------------------------------------------------------------------*
+*--logo
+         DFHMDF POS=(08,43),                                           -
+               LENGTH=32,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               HILIGHT=BLINK,                                          -
+               INITIAL=' (((((((              ))))))))  '
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(09,06),                                           -
+               LENGTH=29,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='A - CONSULTAR   F - CONSULTAR'
+*---------------------------------------------------------------------*
+*--logo
+         DFHMDF POS=(09,43),                                           -
+               LENGTH=32,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               HILIGHT=BLINK,                                          -
+               INITIAL='  (((((((            ))))))))   '
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(10,06),                                           -
+               LENGTH=27,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='B - INCLUIR     G - INCLUIR'
+*---------------------------------------------------------------------*
+*--LOGO 4a
+         DFHMDF POS=(10,43),                                           -
+               LENGTH=08,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               HILIGHT=BLINK,                                          -
+               INITIAL='   ((((('
+*---------------------------------------------------------------------*
+*--LOGO 4b
+         DFHMDF POS=(10,52),                                           -
+               LENGTH=11,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               COLOR=YELLOW,                                           -
+               INITIAL='@@@@@@@@@@@'
+*---------------------------------------------------------------------*
+*--LOGO 4c
+         DFHMDF POS=(10,64),                                           -
+               LENGTH=11,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               HILIGHT=BLINK,                                          -
+               INITIAL=')))))))    '
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(11,06),                                           -
+               LENGTH=27,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='C - EXCLUIR     H - EXCLUIR'
+*---------------------------------------------------------------------*
+*--LOGO5a
+         DfHMDF POS=(11,43),                                           -
+               LENGTH=20,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               COLOR=YELLOW,                                           -
+               INITIAL='    @@@@@@@@@@@@@@@@'
+*---------------------------------------------------------------------*
+*--LOGO5b
+         DfHMDF POS=(11,64),                                           -
+               LENGTH=11,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               HILIGHT=BLINK,                                          -
+               INITIAL='))))))     '
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(12,06),                                           -
+               LENGTH=27,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='D - ALTERAR     I - ALTERAR'
+*---------------------------------------------------------------------*
+*--LOGO6a
+         DFHMDF POS=(12,43),                                           -
+               LENGTH=19,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               COLOR=YELLOW,                                           -
+               INITIAL=' @@@@@@@@@@@@@@@@@@'
+*---------------------------------------------------------------------*
+*--LOGO6b
+         DFHMDF POS=(12,63),                                           -
+               LENGTH=04,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               HILIGHT=BLINK,                                          -
+               INITIAL='))))'
+*---------------------------------------------------------------------*
+*--LOGO6c
+         DFHMDF POS=(12,68),                                           -
+               LENGTH=07,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               COLOR=YELLOW,                                           -
+               INITIAL='@@@@   '
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(13,06),                                           -
+               LENGTH=26,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='E - LISTAR      I - LISTAR'
+*---------------------------------------------------------------------*
+*--LOGO7
+         DFHMDF POS=(13,43),                                           -
+               LENGTH=32,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               COLOR=YELLOW,                                           -
+               INITIAL='@@/,:::,\/,:::,\@@@@@@@@@@@@@@ '
+*---------------------------------------------------------------------*
+*--LOGO8A
+         DFHMDF POS=(14,43),                                           -
+               LENGTH=04,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               COLOR=YELLOW,                                           -
+               INITIAL='@@|:'
+*---------------------------------------------------------------------*
+*--LOGO8B
+         DFHMDF POS=(14,48),                                           -
+               LENGTH=01,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               HILIGHT=BLINK,                                          -
+               COLOR=RED,                                              -
+               INITIAL=':'
+*---------------------------------------------------------------------*
+*--LOGO8C
+         DFHMDF POS=(14,50),                                           -
+               LENGTH=04,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               COLOR=YELLOW,                                           -
+               INITIAL=':||:'
+*---------------------------------------------------------------------*
+*--LOGO8D
+         DFHMDF POS=(14,55),                                           -
+               LENGTH=01,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               HILIGHT=BLINK,                                          -
+               COLOR=RED,                                              -
+               INITIAL=':'
+*---------------------------------------------------------------------*
+*--LOGO8e
+         DFHMDF POS=(14,57),                                           -
+               LENGTH=17,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               COLOR=YELLOW,                                           -
+               INITIAL=':|@@@@@@@@@@@@@@@'
+*---------------------------------------------------------------------*
+*--CONTANTE
+         DFHMDF POS=(15,06),                                           -
+               LENGTH=11,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='OPCAO.....:'
+*---------------------------------------------------------------------*
+*--VARIAVEL
+T1OPC    DFHMDF POS=(15,18),                                           -
+               LENGTH=01,                                              -
+               ATTRB=BRT,                                              -
+               PICIN='X(001)',                                         -
+               PICOUT='X(001)'
+*---------------------------------------------------------------------*
+*--LOGO9A
+         DFHMDF POS=(15,43),                                           -
+               LENGTH=32,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               COLOR=YELLOW,                                           -
+               INITIAL='@@\ ::: /\ ::: /@@@@@@@@@@@@@@  '
+*---------------------------------------------------------------------*
+*--logo
+         DFHMDF POS=(16,43),                                           -
+               LENGTH=32,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               COLOR=YELLOW,                                           -
+               INITIAL=' @@@@@@@@@@@@@@@@@@@@@@@@@@@    '
+*---------------------------------------------------------------------*
+*--logo
+         DFHMDF POS=(17,43),                                           -
+               LENGTH=32,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               COLOR=YELLOW,                                           -
+               INITIAL='   @@@@@@@@@@@@@@@@@@@@@@\      '
+*---------------------------------------------------------------------*
+*--logo
+         DFHMDF POS=(18,43),                                           -
+               LENGTH=32,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               INITIAL='      /    \        (     \     '
+*---------------------------------------------------------------------*
+*--logo
+         DFHMDF POS=(19,43),                                           -
+               LENGTH=32,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               INITIAL='     (      )        \     \    '
+*---------------------------------------------------------------------*
+*--logo
+         DFHMDF POS=(20,43),                                           -
+               LENGTH=12,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               HILIGHT=BLINK,                                          -
+               COLOR=RED,                                              -
+               INITIAL='      \    /'
+*---------------------------------------------------------------------*
+*--logo
+         DFHMDF POS=(20,56),                                           -
+               LENGTH=18,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               INITIAL='         \        '
+*=====================================================================*
+         DFHMDF POS=(21,01),                                           -
+               LENGTH=78,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               INITIAL='------------------------------------------------
+               -------------------------------'
+*=====================================================================*
+*--VARIAVEL
+T1USR    DFHMDF POS=(22,01),                                           -
+               LENGTH=06,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(006)'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(22,15),                                           -
+               LENGTH=57,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='TECLAS VALIDAS: ENTER=PROCESSA TELA PF3=SAIR   -
+               PF5=LIMPAR'
+*=====================================================================*
+         DFHMDF POS=(23,01),                                           -
+               LENGTH=78,                                              -
+               ATTRB=(ASKIP,BRT,PROT),                                 -
+               INITIAL='------------------------------------------------
+               -------------------------------'
+*=====================================================================*
+*--CONSTANTE
+         DFHMDF POS=(24,01),                                           -
+               LENGTH=09,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='MENSAGEM:'
+*---------------------------------------------------------------------*
+*--VARIAVEL
+T1MSG    DFHMDF POS=(24,11),                                           -
+               LENGTH=60,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(060)'
+*---------------------------------------------------------------------*
+        DFHMSD TYPE=FINAL
+        END

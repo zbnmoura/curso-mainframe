@@ -1,0 +1,22 @@
+      *----------------------------------------------------------------*
+      *          BOOK DO ARQUIVO     - GPGO0204                        *
+      *          NOME DO BOOK        - CLIRJ                           *
+      *          NOME DO PDS         - GP.GPGO02.BOOKLIB               *
+      *          NOME DO ARQUIVO     - CLIRJ                           *
+      *          TAMANHO DO ARQUIVO  - 94 BYTES                        *
+      *          DESCRICAO:                                            *
+      *             01 CLIENTES DO RIO DE JANEIRO                      *
+      *             05 CPF DO CLIENTE                                  *
+      *             05 NOME DO CLIENTE                                 *
+      *             05 ENDERECO DO CLIENTE                             *
+      *             05 TELEFONE DO CLIENTE                             *
+      *             05 TOTAL DE COMPRAS DO CLIENTE                     *
+      *             05 ULTIMA COMPRA DO CLIENTE                        *
+      *----------------------------------------------------------------*
+       01  ::REG-CLIRJ.
+           05 ::CPFCLI-RJ                   PIC X(011).
+           05 ::NOMECLI-RJ                  PIC X(025).
+           05 ::ENDCLI-RJ                   PIC X(030).
+           05 ::FONECLI-RJ                  PIC X(010).
+           05 ::TOTALCOMPRAS-RJ             PIC 9(008)V99.
+           05 ::ULTIMACOMPRA-RJ             PIC X(008).

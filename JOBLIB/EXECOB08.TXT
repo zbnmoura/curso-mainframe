@@ -1,0 +1,55 @@
+//GPGO0208  JOB  BRUNO,CLASS=A,MSGCLASS=X,NOTIFY=GPAZ99,TIME=(1,20)
+//JOBLIB    DD   DSN=GP.GERAL.LOADLIB,DISP=SHR
+//*****************************************************************
+//* STEP001 - INCLUIR O VCAD E RECRIA-LO
+//*****************************************************************
+//STEP001   EXEC PGM=IDCAMS
+//SYSPRINT  DD   SYSOUT=*
+//SYSIN     DD  *
+ DELETE GP.AZ99.VCADPRD PURGE CLUSTER
+ IF  MAXCC = 8 THEN SET MAXCC = 0
+ DEFINE  CLUSTER
+    (NAME (GP.GPAZ99.VCADPRD)
+     VOL (PR39T7)
+     TRK (1,1)
+     RECORDSIZE (69,69)
+     KEYS (04,0)
+     SHAREOPTIONS (2,3))
+     DATA(NAME(GP.GPAZ99.VCADPRD.DATA))
+     INDEX(NAME(GP.GPAZ99.VCADPRD.INDEX))
+//******************************************************************
+//* STEP002 - CARREGAR VCADPRD COM BASE NO ARQUIVO CADPRD
+//*           EXECUTAR O PROGRAMA GPGO0208 PARA DAR CARGA
+//******************************************************************
+//STEP002   EXEC PGM=EEXX99E8,COND=(0,NE)
+//VCADPRD   DD   DSN=GP.GPAZ99.VCADPRD,DISP=SHR
+//CADPRD    DD   DSN=GP.GPAZ99.CADPRD,DISP=SHR
+//******************************************************************
+//* STEP003 - IMPRIMIR O ARQUIVO VCADPRD COM O UTILITARIO IDCAMS
+//******************************************************************
+//STEP003   EXEC PRGM=IDCAMS,COND=(0,NE)
+//STEPLIB   DD   DSN=GP.GERAL.LOADLIB,DISP=SHR
+//SYSPRINT  DD   SYSOUT=*
+//VCADPRD   DD   DSN=GP.GPAZ99.VCADPRD,DISP=SHR
+//SYSIN     DD   *
+ PRINT INFILE(VCADPRD) CHAR
+//*
+//*******************************************************************
+//* STEP004 - EXECUTAR O PROGRAMA GPGO0208 PARA ATUALIZAR VCADPRD
+//*******************************************************************
+//STEP004   EXEC PGM=GPGO0208,COND=(0,NE)
+//STEPLIB   DD   DSN=GP.GERAL.LOADLIB,DISP=SHR
+//VCADPRD   DD   DSN=GP.GPAZ99.VCADPRD,DISP=SHR
+//MOVPROD   DD   DSN=GP.GPAZ99.MOVPROD,DISP=SHR
+//RELOCOR   DD   SYSOUT=*
+//*
+//********************************************************************
+//* STEP005 - VAMOS IMPRIMIR O ARQUIVO VCADPRD COM O UTILITARIO IDCAMS
+//********************************************************************
+//STEP005   EXEC PGM=IDCAMS,COND=(0,NE)
+//STEPLIB   DD   DSN=GP.GERAL.LOADLIB,DISP=SHR
+//SYSPRINT  DD   SYSOUT=*
+//VCADPRD   DD   DSN=GP.GPAZ99.VCADPRD,DISP=SHR
+//SYSIN     DD   *
+ PRINT INFILE(VCADPRD) CHAR
+//*

@@ -1,0 +1,69 @@
+      *----------------------------------------------------------------*
+      *          BOOK DO ARQUIVO     - GPGO0203                        *
+      *          NOME DO BOOK        - ROTDATA                         *
+      *          NOME DO PDS         - GP.GPGO02.BOOKLIB               *
+      *          NOME DO ARQUIVO     - ROTDATA                         *
+      *          TAMANHO DO ARQUIVO  -                                 *
+      *----------------------------------------------------------------*
+       9000-IMPRIME-DATA.
+      *==  RECEBENDO AS DATAS DO SISTEMA                             ==*
+           ACCEPT WS-DATA-SISTEMA FROM DATE
+           ACCEPT WS-DATA-JULIANA FROM DAY
+           ACCEPT WS-DIA-SEMANA   FROM DAY-OF-WEEK
+      *==  MOVENDO AS VARIAVEIS  DO SISTEMA DE FORMA CORRESPONDENTE  ==*
+           MOVE CORRESPONDING WS-DATA-SISTEMA
+                                           TO WS-DATA-GREGORIANA-1
+           MOVE CORR          WS-DATA-SISTEMA
+                                           TO WS-DATA-GREGORIANA-2
+           MOVE CORR          WS-DATA-JULIANA
+                                           TO WS-DATA-JULIANA-F
+      *==  CONDICAO PARA MOVER O NOME DO MES            ==*
+      *==  REFERENTE AO NUMERO DO MES.                               ==*
+           EVALUATE WS-MES OF WS-DATA-SISTEMA
+              WHEN 01  MOVE "JANEIRO"      TO WS-TEXTO-MES
+              WHEN 02  MOVE "FEVEREIRO"    TO WS-TEXTO-MES
+              WHEN 03  MOVE "MARCO"        TO WS-TEXTO-MES
+              WHEN 04  MOVE "ABRIL"        TO WS-TEXTO-MES
+              WHEN 05  MOVE "MAIO"         TO WS-TEXTO-MES
+              WHEN 06  MOVE "JUNHO"        TO WS-TEXTO-MES
+              WHEN 07  MOVE "JULHO"        TO WS-TEXTO-MES
+              WHEN 08  MOVE "AGOSTO"       TO WS-TEXTO-MES
+              WHEN 09  MOVE "SETEMBRO"     TO WS-TEXTO-MES
+              WHEN 010 MOVE "OUTUBRO"      TO WS-TEXTO-MES
+              WHEN 011 MOVE "NOVEMBRO"     TO WS-TEXTO-MES
+              WHEN 012 MOVE "DEZEMBRO"     TO WS-TEXTO-MES
+           END-EVALUATE
+      *==  CONDICAO PARA MOVER O NOME DA SEMANA                      ==*
+      *==  REFERENTE AO NUMERO DO DIA DA SEMANA                      ==*
+           EVALUATE WS-DIA-SEMANA
+              WHEN 01
+                 MOVE "SEGUNDA FEIRA"      TO WS-TEXTO-DIA-SEMANA
+              WHEN 02
+                 MOVE "TERCA FEIRA"        TO WS-TEXTO-DIA-SEMANA
+              WHEN 03
+                 MOVE "QUARTA FEIRA"       TO WS-TEXTO-DIA-SEMANA
+              WHEN 04
+                 MOVE "QUINTA FEIRA"       TO WS-TEXTO-DIA-SEMANA
+              WHEN 05
+                 MOVE "SEXTA FEIRA"        TO WS-TEXTO-DIA-SEMANA
+              WHEN 06
+                 MOVE "SABADO"             TO WS-TEXTO-DIA-SEMANA
+              WHEN 07
+                 MOVE "DOMINGO"            TO WS-TEXTO-DIA-SEMANA
+           END-EVALUATE
+      *== DISPLAY DAS DATAS                                          ==*
+           DISPLAY "***************************************************"
+           DISPLAY "*  DATA GREGORIANA 1 - "
+                   WS-DATA-GREGORIANA-1
+                   "                 *"
+           DISPLAY "*  DATA GREGORIANA-2 - "
+                   WS-DATA-GREGORIANA-2
+                   "    *"
+           DISPLAY "*  DATA JULIANA      - "
+                   WS-DATA-JULIANA-F
+                   "                *"
+           DISPLAY "*  DIA DA SEMANA     - "
+                   WS-TEXTO-DIA-SEMANA
+                   "              *"
+           DISPLAY "***************************************************"
+           .

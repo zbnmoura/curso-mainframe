@@ -1,0 +1,8 @@
+//GPAZ02XX JOB 'BRUNO',MSGCLASS=X,CLASS=C,NOTIFY=GPAZ02,TIME=(0,20)
+//**********************************************************************
+//* JOB DE COMPILACAO COBOL + CICS COMMAND LEVEL
+//* SUBSTITUA XXNN PELO PREFIXO DE SEU USUARIO E
+//*           PGMCICS PELO NOME DE SEU PROGRAMA
+//**********************************************************************
+// JCLLIB ORDER=GP.LB.PROCLIB
+//CICSPGM  EXEC DFHCICS1,NAME=AZ02PGMM,INSTR='GPAZ02'

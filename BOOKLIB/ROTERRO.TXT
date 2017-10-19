@@ -1,0 +1,16 @@
+      *----------------------------------------------------------------*
+      *          BOOK DO ARQUIVO     - GPGO0203                        *
+      *          NOME DO BOOK        - ROTERRO                         *
+      *          NOME DO PDS         - GP.GPGO02.BOOKLIB               *
+      *          NOME DO ARQUIVO     - ROTERRO                         *
+      *          TAMANHO DO ARQUIVO  -                                 *
+      *----------------------------------------------------------------*
+       9999-ERRO.
+           DISPLAY "==================================================="
+           DISPLAY "MENSAGEM....: " WS-MSG
+           DISPLAY "FILE STATUS.: " WS-FS
+           DISPLAY "==================================================="
+           DISPLAY "==      TERMINO NORMAL DO PROGRAMA GPGO0203      =="
+           MOVE 12                         TO RETURN-CODE
+           STOP RUN
+           .

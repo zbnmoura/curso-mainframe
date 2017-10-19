@@ -1,0 +1,515 @@
+      *----------------------------------------------------------------*
+       IDENTIFICATION                      DIVISION.
+      *----------------------------------------------------------------*
+       PROGRAM-ID.                         GPAZ9907.
+       AUTHOR.                             BRUNO NEVES DE MOURA.
+      *----------------------------------------------------------------*
+       ENVIRONMENT                         DIVISION.
+      *----------------------------------------------------------------*
+       CONFIGURATION                       SECTION.
+      *----------------------------------------------------------------*
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA.
+      *----------------------------------------------------------------*
+       INPUT-OUTPUT                        SECTION.
+      *----------------------------------------------------------------*
+       FILE-CONTROL.
+           SELECT MOVTOEST ASSIGN TO UT-S-MOVTOEST
+           FILE STATUS IS FS-MOVTOEST
+           .
+           SELECT RELMOV01 ASSIGN TO UT-S-RELMOV01
+           FILE STATUS IS FS-RELMOV01
+           .
+      *----------------------------------------------------------------*
+       DATA                                DIVISION.
+      *----------------------------------------------------------------*
+       FILE                                SECTION.
+      *----------------------------------------------------------------*
+       FD  MOVTOEST
+           LABEL RECORDS IS STANDARD
+           RECORDING MODE IS F
+           .
+       01  REG-MOVTOEST.
+           05  TIPO-REG-MOVTO              PIC X(001).
+           05  FILLER                      PIC X(032).
+
+       FD  RELMOV01
+           LABEL RECORDS IS OMITTED
+           RECORDING MODE IS F
+           .
+       01  REG-RELMOV01                    PIC X(080).
+      *----------------------------------------------------------------*
+       WORKING-STORAGE                     SECTION.
+      *----------------------------------------------------------------*
+      *== MOVTOEST: HEADER, DATA E TRAILER.                         ==*
+      *----------------------------------------------------------------*
+       01  WS-REG-MOVTOEST.
+           05  WS-TIPO-REG-MOVTO           PIC X(001).
+           05  FILLER                      PIC X(032).
+       01  WS-REG-MOVTOEST-HEADER REDEFINES WS-REG-MOVTOEST.
+           05  FILLER                      PIC X(001).
+           05  WS-SIGLA-SYS-CAD            PIC X(005).
+           05  WS-ANO-MES-REF-CAD          PIC X(006).
+           05  FILLER                      PIC X(021).
+       01  WS-REG-MOVTOEST-DATA REDEFINES WS-REG-MOVTOEST.
+           05  FILLER                      PIC X(001).
+           05  WS-NUMMOVTO                 PIC 9(008).
+           05  WS-DATAMOVTO                PIC 9(008).
+           05  WS-HORAMOVTO                PIC 9(006).
+           05  WS-CODPRODMOVTO             PIC 9(004).
+           05  WS-TIPOMOVTO                PIC X(001).
+           05  WS-QTDMOVTO                 PIC 9(008) COMP-3.
+       01  WS-REG-MOVTOEST-TRAILER.
+           05  FILLER                      PIC X(001).
+           05  WS-QTDREG-MOVTO             PIC 9(005).
+           05  FILLER                      PIC X(027).
+      *== RELMOV01                                                   ==*
+       01  WS-REG-RELMOV01                 PIC X(080).
+      *----------------------------------------------------------------*
+      *== CABECALHO, DATA E RODAPE                                   ==*
+      *----------------------------------------------------------------*
+      *== CABEC1                                                     ==*
+       01  WS-CABEC1.
+           05  WS-DATA-CABEC1.
+               10  WS-DIA                  PIC X(002).
+               10  FILLER                  PIC X(001)
+                                                   VALUE "/".
+               10  WS-MES                  PIC X(002).
+               10  FILLER                  PIC X(003)
+                                                   VALUE "/20".
+               10  WS-ANO                  PIC X(002).
+           05  FILLER                      PIC X(017)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(027)
+                                                   VALUE
+           "** BOX COMPANY DO BRASIL **".
+           05  FILLER                      PIC X(018)
+                                                   VALUE SPACES.
+           05  WS-HORA-CABEC1.
+               10  WS-HORA                 PIC X(002).
+               10  FILLER                  PIC X(001)
+                                                   VALUE ":".
+               10  WS-MIN                  PIC X(002).
+               10  FILLER                  PIC X(001)
+                                                   VALUE ":".
+               10  WS-SEG                  PIC X(002).
+      *== CABEC2                                                     ==*
+       01  WS-CABEC2.
+           05  FILLER                      PIC X(050)
+                                                   VALUE
+           "RELATORIO DE MOVIMENTACAO DE ESTOQUE  (REFERENCIA ".
+           05  WS-REF-CABEC2.
+               10  WS-ANO2                 PIC X(004).
+               10  FILLER                  PIC X(001)
+                                                   VALUE "/".
+               10  WS-MES2                 PIC X(002).
+           05  FILLER                      PIC X(001)
+                                                   VALUE ")".
+           05  FILLER                      PIC X(012)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(005)
+                                                   VALUE "PAG. ".
+           05  WS-PAG-CABEC2               PIC X(005).
+      *==CABEC3                                                      ==*
+       01  WS-CABEC3                       PIC X(080)
+                                                   VALUE ALL "-".
+      *==CABEC4                                                      ==*
+       01  WS-CABEC4.
+           05  FILLER                      PIC X(009)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(006)
+                                                   VALUE "NUMERO".
+           05  FILLER                      PIC X(008)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(004)
+                                                   VALUE "DATA".
+           05  FILLER                      PIC X(010)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(004)
+                                                   VALUE "HORA".
+           05  FILLER                      PIC X(008)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(007)
+                                                   VALUE "PRODUTO".
+           05  FILLER                      PIC X(004)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(010)
+                                                   VALUE "QUANTIDADE".
+           05  FILLER                      PIC X(010)
+                                                   VALUE SPACES.
+      *== CABEC5                                                     ==*
+       01  WS-CABEC5.
+           05  FILLER                      PIC X(009)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(010)
+                                                   VALUE ALL "-".
+           05  FILLER                      PIC X(004)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(010)
+                                           VALUE ALL "-".
+           05  FILLER                      PIC X(004)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(008)
+                                                   VALUE ALL "-".
+           05  FILLER                      PIC X(004)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(007)
+                                                   VALUE ALL "-".
+           05  FILLER                      PIC X(004)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(011)
+                                                   VALUE ALL "-".
+           05  FILLER                      PIC X(009)
+                                                   VALUE SPACES.
+      *== DETALHES                                                   ==*
+       01  WS-LINDET.
+           05  FILLER                      PIC X(009)
+                                                   VALUE SPACES.
+           05  LD-NUMMOVTO                 PIC 99.999.999.
+           05  FILLER                      PIC X(004)
+                                                   VALUE SPACES.
+           05  LD-DATAMOVTO.
+               10  WS-DIA                  PIC X(002).
+               10  FILLER                  PIC X(001)
+                                                   VALUE "/".
+               10  WS-MES                  PIC X(002).
+               10  FILLER                  PIC X(001)
+                                                   VALUE "/".
+               10  WS-ANO                  PIC X(004).
+           05  FILLER                      PIC X(004)
+                                                   VALUE SPACES.
+           05  LD-HORAMOVTO.
+               10  WS-HORA                 PIC X(002).
+               10  FILLER                  PIC X(001)
+                                                   VALUE ":".
+               10  WS-MIN                  PIC X(002).
+               10  FILLER                  PIC X(001)
+                                                   VALUE ":".
+               10  WS-SEG                  PIC X(002).
+           05  FILLER                      PIC X(005)
+                                                   VALUE SPACES.
+           05  LD-CODPRODMOVTO             PIC 9(004).
+           05  FILLER                      PIC X(006)
+                                                   VALUE SPACES.
+           05  LD-QTDMOVTO                 PIC ZZ.ZZZ.ZZ9+.
+           05  FILLER                      PIC X(009)
+                                                   VALUE SPACES.
+      *== RODAPE1                                                    ==*
+       01  WS-RODAPE1.
+           05  FILLER                      PIC X(080)
+                                                   VALUE SPACES.
+      *== RODAPE2                                                    ==*
+       01  WS-RODAPE2.
+           05  FILLER                      PIC X(043)
+                                                   VALUE
+           "APOS O USO UTILIZE ESTE PAPEL COMO RASCUNHO".
+           05  FILLER                      PIC X(018)
+                                                   VALUE SPACES.
+           05  FILLER                      PIC X(019)
+                                                   VALUE
+           "RECICLE SUAS IDEIAS".
+      *----------------------------------------------------------------*
+      *== VARIAVEIS AUXILIARES                                       ==*
+      *----------------------------------------------------------------*
+      *== DATA 99/99/2099                                            ==*
+       01  WS-DATA1.
+           05  WS-ANO                      PIC X(004).
+           05  WS-MES                      PIC X(002).
+           05  WS-DIA                      PIC X(002).
+      *== DATA 9999/99                                               ==*
+       01  WS-DATA2.
+           05  WS-ANO2                     PIC 9(004).
+           05  WS-MES2                     PIC 9(002).
+      *== TEMPO E TEMPO FORMATADO                                    ==*
+       01  WS-TEMPO.
+           05  WS-HORA                     PIC 9(002).
+           05  WS-MIN                      PIC 9(002).
+           05  WS-SEG                      PIC 9(002).
+
+      *01  WS-TEMPO-F.
+      *    05  WS-HORA                     PIC X(002).
+      *    05  FILLER                      PIC X(001)
+      *                                            VALUE ":".
+      *    05 WS-MIN                       PIC X(002).
+      *    05  FILLER                      PIC X(001)
+      *                                            VALUE ":".
+      *    05  WS-SEG                      PIC X(002).
+      *== CONTADORES                                                 ==*
+       77  WS-CTMOV                        PIC 9(004) COMP.
+       77  WS-CTLIDO                       PIC 9(004) COMP.
+       77  WS-CTLINHA                      PIC 9(004) COMP.
+       77  WS-CTIMP                        PIC 9(004) COMP.
+       77  WS-CTPAG                        PIC 9(004) COMP.
+       77  WS-CTPULA                       PIC 9(004) COMP.
+       77  WS-CTMOV-F                      PIC ZZZ9.
+       77  WS-CTLIDO-F                     PIC ZZZ9.
+       77  WS-CTLINHA-F                    PIC ZZZ9.
+       77  WS-CTIMP-F                      PIC ZZZ9.
+       77  WS-CTPAG-F                      PIC ZZZ9.
+       77  WS-CTPULA-F                     PIC ZZZ9.
+      *== MENSAGENS DE ERRO                                          ==*
+       77  WS-MSG                          PIC X(060).
+       77  WS-FS                           PIC X(002).
+      *== FLAG DE FILE STATUS                                        ==*
+       01  FS-MOVTOEST                     PIC X(002).
+           88  FS-SUCESSO-M                        VALUE "00".
+
+           88  FS-FIMARQ-M                         VALUE "10".
+
+       01  FS-RELMOV01                     PIC X(002).
+           88  FS-SUCESSO-R                        VALUE "00".
+
+           88  FS-FIMARQ-R                         VALUE "10".
+
+      *== VARIAVEIS DE DATA E TEMPO                                  ==*
+           COPY VARDATA
+           .
+           COPY VARTEMPO
+           .
+      *----------------------------------------------------------------*
+       PROCEDURE                           DIVISION.
+      *----------------------------------------------------------------*
+       0000-GPAZ9907.
+           PERFORM 1000-INICIALIZAR
+           PERFORM 2000-PROCESSAR
+           UNTIL WS-TIPO-REG-MOVTO = "T"
+           PERFORM 3000-TERMINO
+           STOP RUN
+           .
+      *----------------------------------------------------------------*
+       1000-INICIALIZAR.
+           ACCEPT WS-HORARIO-INICIAL FROM TIME
+           ACCEPT WS-TEMPO FROM TIME
+           ACCEPT WS-DATA-SISTEMA    FROM DATE
+           MOVE 0                          TO WS-CTLIDO
+                                              WS-CTPAG
+                                              WS-CTIMP
+           MOVE 99                         TO WS-CTLINHA
+           OPEN INPUT MOVTOEST
+           IF NOT FS-SUCESSO-M
+               MOVE "ERRO NA ABERTURA DE MOVTOEST. "
+                                           TO WS-MSG
+               MOVE FS-MOVTOEST            TO WS-FS
+               GO TO 9999-ERRO
+           END-IF
+
+           PERFORM 1100-LER-MOVTOEST
+
+           IF FS-FIMARQ-M
+               MOVE "ERRO NA LEITURA DE MOVTOEST. "
+                                           TO WS-MSG
+               MOVE FS-MOVTOEST            TO WS-FS
+               GO TO 9999-ERRO
+           END-IF
+
+           IF WS-TIPO-REG-MOVTO NOT EQUAL "H"
+               MOVE "MOVTOEST NAO POSSUI HEADER. "
+                                           TO WS-MSG
+               MOVE FS-MOVTOEST            TO WS-FS
+               GO TO 9999-ERRO
+           END-IF
+
+           MOVE WS-ANO-MES-REF-CAD(01:04)  TO WS-DATA2(01:04)
+           MOVE WS-ANO-MES-REF-CAD(05:02)  TO WS-DATA2(05:02)
+           OPEN OUTPUT RELMOV01
+           IF NOT FS-SUCESSO-R
+               MOVE "ERRO NA ABERTURA DE RELMOV01. "
+                                           TO WS-MSG
+               MOVE FS-RELMOV01            TO WS-FS
+               GO TO 9999-ERRO
+           END-IF
+
+           PERFORM 1100-LER-MOVTOEST
+           IF WS-TIPO-REG-MOVTO NOT EQUAL "D"
+               MOVE "MOVTOEST NAO POSSUI DATA. "
+                                           TO WS-MSG
+               MOVE FS-MOVTOEST            TO WS-FS
+               GO TO 9999-ERRO
+           END-IF
+      *    PERFORM 9100-FORMATA-DATA-HORA
+           .
+      *----------------------------------------------------------------*
+       1100-LER-MOVTOEST.
+           READ MOVTOEST INTO WS-REG-MOVTOEST
+           IF FS-SUCESSO-M
+               ADD 1 TO WS-CTLIDO
+           ELSE
+               IF FS-FIMARQ-M
+                  IF WS-CTLIDO > 0
+                     MOVE "MOVTOEST NAO POSSUI TRAILER. "
+                                           TO WS-MSG
+                     MOVE FS-MOVTOEST      TO WS-FS
+                     GO TO 9999-ERRO
+                  END-IF
+               ELSE
+                  MOVE "ERRO LEITURA L318" TO WS-MSG
+                  MOVE FS-MOVTOEST         TO WS-FS
+                  GO TO 9999-ERRO
+               END-IF
+           END-IF
+           .
+      *----------------------------------------------------------------*
+       2000-PROCESSAR.
+           IF WS-CTLINHA > 49
+              PERFORM 2100-IMPRIME-CABECALHO
+           END-IF
+           PERFORM 2200-IMPRIME-DETALHE
+           IF WS-CTLINHA EQUAL 48
+              PERFORM 2300-IMPRIME-RODAPE
+           END-IF
+           PERFORM 1100-LER-MOVTOEST
+           .
+      *----------------------------------------------------------------*
+       2100-IMPRIME-CABECALHO.
+           MOVE CORR WS-DATA-SISTEMA       TO WS-DATA-CABEC1
+           MOVE CORR WS-TEMPO              TO WS-HORA-CABEC1
+           MOVE CORR WS-DATA2              TO WS-REF-CABEC2
+           ADD 1 TO WS-CTPAG
+           MOVE WS-CTPAG                   TO WS-CTPAG-F
+           MOVE WS-CTPAG-F                 TO WS-PAG-CABEC2
+      *== WRITE CABECALHO 1                                          ==*
+           WRITE REG-RELMOV01 FROM WS-CABEC1 AFTER PAGE
+           IF NOT FS-SUCESSO-R
+              MOVE "ERRO NA GRAVACAO DO CABEC1"
+                                           TO WS-MSG
+              MOVE FS-RELMOV01             TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           MOVE 5                       TO WS-CTLINHA
+      *== WRITE CABECALHO 2                                          ==*
+           WRITE REG-RELMOV01 FROM WS-CABEC2
+           IF NOT FS-SUCESSO-R
+              MOVE "ERRO NA GRAVACAO DO CABEC2"
+                                           TO WS-MSG
+              MOVE FS-RELMOV01             TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           MOVE 5                       TO WS-CTLINHA
+      *== WRITE CABECALHO 3                                          ==*
+           WRITE REG-RELMOV01 FROM WS-CABEC3
+           IF NOT FS-SUCESSO-R
+              MOVE "ERRO NA GRAVACAO DO CABEC3"
+                                           TO WS-MSG
+              MOVE FS-RELMOV01             TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           MOVE 5                       TO WS-CTLINHA
+      *== WRITE CABECALHO 4                                          ==*
+           WRITE REG-RELMOV01 FROM WS-CABEC4
+           IF NOT FS-SUCESSO-R
+              MOVE "ERRO NA GRAVACAO DO CABEC4"
+                                           TO WS-MSG
+              MOVE FS-RELMOV01             TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           MOVE 5                       TO WS-CTLINHA
+      *== WRITE CABECALHO 5                                          ==*
+           WRITE REG-RELMOV01 FROM WS-CABEC5
+           IF NOT FS-SUCESSO-R
+              MOVE "ERRO NA GRAVACAO DO CABEC5"
+                                           TO WS-MSG
+              MOVE FS-RELMOV01             TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           MOVE 5                       TO WS-CTLINHA
+           .
+      *----------------------------------------------------------------*
+       2200-IMPRIME-DETALHE.
+           MOVE WS-NUMMOVTO                TO LD-NUMMOVTO
+           MOVE WS-DATAMOVTO               TO WS-DATA1
+           MOVE CORR WS-DATA1              TO LD-DATAMOVTO
+           MOVE WS-HORAMOVTO               TO WS-TEMPO
+           MOVE CORR WS-TEMPO              TO LD-HORAMOVTO
+           MOVE WS-CODPRODMOVTO            TO LD-CODPRODMOVTO
+           IF WS-TIPOMOVTO EQUAL "E"
+              MOVE WS-QTDMOVTO             TO LD-QTDMOVTO
+           ELSE
+              MULTIPLY WS-QTDMOVTO BY -1 GIVING LD-QTDMOVTO
+           END-IF
+           WRITE REG-RELMOV01 FROM WS-LINDET
+           IF NOT FS-SUCESSO-R
+              MOVE "ERRO NA GRAVACAO DO LINDET. "
+                                           TO WS-MSG
+               MOVE FS-RELMOV01            TO WS-FS
+               GO TO 9999-ERRO
+           END-IF
+           ADD 1 TO WS-CTLINHA
+           ADD 1 TO WS-CTIMP
+           .
+      *----------------------------------------------------------------*
+       2300-IMPRIME-RODAPE.
+           COMPUTE WS-CTPULA = 48 - WS-CTLINHA
+           WRITE REG-RELMOV01 FROM WS-RODAPE1 AFTER WS-CTPULA LINES
+              IF NOT FS-SUCESSO-R
+                 MOVE "ERRO NA GRAVACAO DO RODAPE1. "
+                                           TO WS-MSG
+                 MOVE FS-RELMOV01          TO WS-FS
+                 GO TO 9999-ERRO
+              END-IF
+           WRITE REG-RELMOV01 FROM WS-RODAPE2
+              IF NOT FS-SUCESSO-R
+                 MOVE "ERRO NA GRAVACAO DO RODAPE2. "
+                                           TO WS-MSG
+                 MOVE FS-RELMOV01          TO WS-FS
+                 GO TO 9999-ERRO
+              END-IF
+           MOVE 50                         TO WS-CTLINHA
+           .
+      *----------------------------------------------------------------*
+       3000-TERMINO.
+           PERFORM 9000-IMPRIME-DATA
+           IF WS-CTLINHA < 50
+              PERFORM 2300-IMPRIME-RODAPE
+           END-IF
+           CLOSE MOVTOEST
+           IF NOT FS-SUCESSO-M
+              MOVE "ERRO AO FECHAR MOVTOEST. "
+                                           TO WS-MSG
+              MOVE FS-MOVTOEST             TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           CLOSE RELMOV01
+           IF NOT FS-SUCESSO-R
+              MOVE "ERRO AO FECHAR RELMOV01. "
+                                           TO WS-MSG
+              MOVE FS-RELMOV01             TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           IF WS-QTDREG-MOVTO NOT EQUAL WS-CTIMP
+              MOVE 12 TO RETURN-CODE
+              STOP RUN
+           END-IF
+           PERFORM 9000-CALCULA-TEMPO-PROC
+           MOVE WS-CTMOV                   TO WS-CTMOV-F
+           MOVE WS-CTLIDO                  TO WS-CTLIDO-F
+           MOVE WS-CTLINHA                 TO WS-CTLINHA-F
+           MOVE WS-CTIMP                   TO WS-CTIMP-F
+           MOVE WS-CTPAG                   TO WS-CTPAG-F
+           MOVE WS-CTPULA                  TO WS-CTPULA-F
+           DISPLAY "==================================================="
+           DISPLAY "            BOX COMPANY DO BRASIL"
+           DISPLAY "==================================================="
+           DISPLAY "TOTAL DE MOVIMENTOS LIDOS............: " WS-CTLIDO-F
+           DISPLAY "TOTAL DE PAGINAS IMPRESSAS...........: " WS-CTPAG-F
+           DISPLAY "TOTAL DE MOVIMENTOS IMPRESSOS........: " WS-CTIMP-F
+           DISPLAY "==================================================="
+           DISPLAY "TEMPO TOTAL DE PROCESSAMENTO.........: "
+                    WS-TEMPO-PROCESSAMENTO-F
+           DISPLAY "==================================================="
+           .
+      *----------------------------------------------------------------*
+      *9100-FORMATA-DATA-HORA.
+      *    ACCEPT WS-DATA-SISTEMA FROM DATE
+      *    ACCEPT WS-TEMPO FROM TIME
+      *    MOVE CORR WS-DATA-SISTEMA       TO WS-DATA-CABEC1
+      *    MOVE CORR WS-TEMPO              TO WS-HORA-CABEC1
+      *    MOVE CORR WS-DATA2              TO WS-REF-CABEC2
+      *    .
+      *----------------------------------------------------------------*
+           COPY ROTDATA
+           .
+           COPY ROTERRO
+           .
+           COPY CALCTEMP
+           .
+      *----------------------------------------------------------------*

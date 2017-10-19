@@ -1,0 +1,23 @@
+      *----------------------------------------------------------------*
+      *          BOOK DO ARQUIVO     - GPGO0204                        *
+      *          NOME DO BOOK        - CLIUNIF                         *
+      *          NOME DO PDS         - GP.GPGO02.BOOKLIB               *
+      *          NOME DO ARQUIVO     - CLIUNIF                         *
+      *          TAMANHO DO ARQUIVO  - 94 BYTES                        *
+      *          DESCRICAO:                                            *
+      *             01 CLIENTES UNIFICADOS                             *
+      *             05 CPF DO CLIENTE                                  *
+      *             05 NOME DO CLIENTE                                 *
+      *             05 ENDERECO DO CLIENTE                             *
+      *             05 TELEFONE DO CLIENTE                             *
+      *             05 TOTAL DE COMPRAS DO CLIENTE                     *
+      *             05 ULTIMA COMPRA DO CLIENTE                        *
+      *----------------------------------------------------------------*
+       01  ::REG-CLIUNIF.
+           05 ::CPFCLI-UNIF                 PIC X(011).
+           05 ::NOMECLI-UNIF                PIC X(025).
+           05 ::ENDCLI-UNIF                 PIC X(030).
+           05 ::FONECLI-UNIF                PIC X(010).
+           05 ::TOTALCOMPRAS-UNIF           PIC 9(008)V99.
+           05 ::ULTIMACOMPRA-UNIF           PIC X(008).
+

@@ -1,0 +1,256 @@
+      *----------------------------------------------------------------*
+       IDENTIFICATION                      DIVISION.
+      *----------------------------------------------------------------*
+       PROGRAM-ID.                         AZ02PGMM.
+       AUTHOR.                             BRUNO NEVES DE MOURA.
+      *----------------------------------------------------------------*
+       ENVIRONMENT                         DIVISION.
+      *----------------------------------------------------------------*
+       CONFIGURATION                       SECTION.
+      *----------------------------------------------------------------*
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA.
+      *----------------------------------------------------------------*
+       DATA                                DIVISION.
+      *----------------------------------------------------------------*
+       WORKING-STORAGE                     SECTION.
+      *----------------------------------------------------------------*
+       77  WS-MSG-ERRO                     PIC X(080).
+       77  WS-LENGTH                       PIC S9(004) COMP.
+       01  WS-DFHCOMMAREA.
+           05  WS-FASE                     PIC X(001).
+       01  WS-VARTEMPO.
+           05 WS-DATA                      PIC X(010).
+           05 WS-HORARIO                   PIC X(008).
+      *-- COPYS
+      *-- MNEMONICO DOS CARACTERES DE ATRIBUTO
+           COPY DFHBMSCA
+           .
+      *-- MNEMONICO DAS TECLAS PRECIONADAS
+           COPY DFHAID
+           .
+      *-- MAPA SIMBOLICO
+           COPY AZ02MNU
+           .
+      *----------------------------------------------------------------*
+       LINKAGE                             SECTION.
+      *----------------------------------------------------------------*
+       01  DFHCOMMAREA.
+           05  OCCURS 0 TO 32767 TIMES DEPENDING ON EIBCALEN
+                                           PIC X(001).
+      *----------------------------------------------------------------*
+       PROCEDURE                           DIVISION.
+      *----------------------------------------------------------------*
+      *-- TRATAMENTO DE EXCECAO
+           EXEC CICS HANDLE CONDITION
+              MAPFAIL(999-MAPFAIL)
+              ERROR(999-ERROR)
+           END-EXEC
+      *
+           MOVE DFHCOMMAREA                TO WS-DFHCOMMAREA
+           IF EIBCALEN EQUAL ZERO
+              MOVE '1'                     TO WS-FASE
+           END-IF
+      *
+           EVALUATE WS-FASE
+              WHEN '1' PERFORM 100-FASE1
+              WHEN '2' PERFORM 200-FASE2
+              WHEN OTHER
+                 MOVE +80                  TO WS-LENGTH
+                 MOVE "ERRO NO NUMERO DA FASE"
+                                           TO WS-MSG-ERRO
+      *
+              EXEC CICS SEND TEXT
+                 FROM (WS-MSG-ERRO)
+                 LENGTH(WS-LENGTH)
+                 ERASE FREEKB ALARM
+              END-EXEC
+           END-EVALUATE
+           .
+      *----------------------------------------------------------------*
+       100-FASE1.
+           MOVE LOW-VALUES                 TO MAPAMNUO
+           MOVE -1                         TO T1OPCL
+           MOVE DFHUNIMD                   TO T1OPCA
+           MOVE "INFORME A OPCAO DESEJADA ENTRE A E J"
+                                           TO T1MSGO
+           PERFORM 999-MANDA-TELA
+           PERFORM 999-CHAMA-FASE2
+           .
+      *----------------------------------------------------------------*
+       200-FASE2.
+           EXEC CICS HANDLE AID
+              ENTER(210-ENTER)
+              PF3(220-PF3)
+              CLEAR(220-PF3)
+              PF5(230-PF5)
+              ANYKEY(240-ANYKEY)
+           END-EXEC
+      *-- RECEBER O MAPA
+           EXEC CICS RECEIVE
+              MAP('MAPAMNU')
+              MAPSET('AZ02MNU')
+              INTO(MAPAMNUI)
+           END-EXEC
+           .
+      *----------------------------------------------------------------*
+       210-ENTER.
+           IF T1OPCL = 0 OR T1OPCI = SPACES
+              MOVE "OPCAO INVALIDA, DIGITE NOVAMENTE. "
+                                           TO T1MSGO
+              MOVE -1                      TO T1OPCL
+              PERFORM 999-MANDA-TELA
+              PERFORM 999-CHAMA-FASE2
+           END-IF
+      *
+           EVALUATE T1OPCI
+              WHEN 'A'
+                 MOVE '1'                  TO WS-FASE
+                 EXEC CICS XCTL
+                    PROGRAM('AZ02PGMA')
+                    COMMAREA(WS-DFHCOMMAREA)
+                    LENGTH(LENGTH OF WS-DFHCOMMAREA)
+                 END-EXEC
+              WHEN 'B'
+                 MOVE "OPCAO B(INCLUIR VSAM) ESCOLHIDA"
+                                           TO T1MSGO
+              WHEN 'C'
+                 MOVE '1'                  TO WS-FASE
+                 EXEC CICS XCTL
+                    PROGRAM('AZ02PGMC')
+                    COMMAREA(WS-DFHCOMMAREA)
+                    LENGTH(LENGTH OF WS-DFHCOMMAREA)
+                 END-EXEC
+                 MOVE "OPCAO C(EXCLUIR VSAM) ESCOLHIDA"
+                                           TO T1MSGO
+              WHEN 'D'
+                 MOVE "OPCAO D(ALTERAR VSAM) ESCOLHIDA"
+                                           TO T1MSGO
+              WHEN 'E'
+                 MOVE "OPCAO E(LISTAR VSAM) ESCOLHIDA"
+                                           TO T1MSGO
+              WHEN 'F'
+                 MOVE "OPCAO F(CONSULTAR VSAM) ESCOLHIDA"
+                                           TO T1MSGO
+              WHEN 'G'
+                 MOVE "OPCAO G(INCLUIR VSAM) ESCOLHIDA"
+                                           TO T1MSGO
+              WHEN 'H'
+                 MOVE "OPCAO H(EXCLUIR VSAM) ESCOLHIDA"
+                                           TO T1MSGO
+              WHEN 'I'
+                 MOVE "OPCAO I(ALTERAR VSAM) ESCOLHIDA"
+                                           TO T1MSGO
+              WHEN 'J'
+                 MOVE "OPCAO J(LISTAR VSAM) ESCOLHIDA"
+                                           TO T1MSGO
+              WHEN OTHER
+                 MOVE "OPCAO INVALIDA - TENTE NOVAMENTE"
+                                           TO T1MSGO
+           END-EVALUATE
+      *
+           MOVE LOW-VALUES                 TO T1OPCO
+           MOVE -1                         TO T1OPCL
+           PERFORM 999-MANDA-TELA
+           PERFORM 999-CHAMA-FASE2
+           .
+      *----------------------------------------------------------------*
+       220-PF3.
+           MOVE "TERMINO NORMAL DA TRANSACAO Z02M."
+                                           TO WS-MSG-ERRO
+           MOVE 80                         TO WS-LENGTH
+           EXEC CICS SEND
+              FROM(WS-MSG-ERRO)
+              LENGTH(WS-LENGTH)
+              ERASE
+           END-EXEC
+      *
+           EXEC CICS RETURN
+           END-EXEC
+           .
+      *----------------------------------------------------------------*
+       230-PF5.
+           PERFORM 999-CHAMA-FASE1
+           .
+      *----------------------------------------------------------------*
+       240-ANYKEY.
+           MOVE "PRESSIONE APENAS ENTER OU PF3"
+                                           TO T1MSGO
+           PERFORM 999-MANDA-TELA
+           PERFORM 999-CHAMA-FASE2
+           .
+      *----------------------------------------------------------------*
+       999-CHAMA-FASE1.
+           MOVE '1'                        TO WS-FASE
+           EXEC CICS XCTL
+              PROGRAM('AZ02PGMM')
+              COMMAREA(WS-DFHCOMMAREA)
+              LENGTH(LENGTH OF WS-DFHCOMMAREA)
+           END-EXEC
+           .
+      *----------------------------------------------------------------*
+       999-CHAMA-FASE2.
+           MOVE '2'                        TO WS-FASE
+           EXEC CICS RETURN
+              TRANSID('Z02M')
+              COMMAREA(WS-DFHCOMMAREA)
+              LENGTH(LENGTH OF WS-DFHCOMMAREA)
+           END-EXEC
+           .
+      *----------------------------------------------------------------*
+       999-MANDA-TELA.
+           MOVE EIBTRNID                   TO T1TERMO
+           MOVE EIBTRMID                   TO T1TRANO
+           MOVE EIBTASKN                   TO T1TASKO
+           MOVE WS-FASE                    TO T1FASEO
+      *
+           EXEC CICS ASSIGN
+              USERID(T1USRO)
+           END-EXEC
+      *
+           EXEC CICS LINK
+              PROGRAM('AUXCICS1')
+              COMMAREA(WS-VARTEMPO)
+              LENGTH(+18)
+           END-EXEC
+      *
+           MOVE WS-DATA                    TO T1DATAO
+           MOVE WS-HORARIO                 TO T1HORAO
+      *
+           EXEC CICS SEND
+              MAP('MAPAMNU')
+              MAPSET('AZ02MNU')
+              FROM(MAPAMNUO)
+              CURSOR
+              ERASE FREEKB ALARM
+           END-EXEC
+           .
+      *----------------------------------------------------------------*
+       999-MAPFAIL.
+           MOVE "ERRO ENVIO/RECEPCAO DO MAPAMNU. "
+                                           TO WS-MSG-ERRO
+           MOVE 80                         TO WS-LENGTH
+           EXEC CICS SEND
+              FROM(WS-MSG-ERRO)
+              LENGTH(WS-LENGTH)
+              ERASE
+           END-EXEC
+      *
+           EXEC CICS RETURN
+           END-EXEC
+           .
+      *----------------------------------------------------------------*
+       999-ERROR.
+           MOVE "ERRO GENERICO NO AZ02PGMM. "
+                                           TO WS-MSG-ERRO
+           MOVE 80                         TO WS-LENGTH
+           EXEC CICS SEND
+              FROM(WS-MSG-ERRO)
+              LENGTH(WS-LENGTH)
+              ERASE
+           END-EXEC
+      *
+           EXEC CICS RETURN
+           END-EXEC
+           .
+      *----------------------------------------------------------------*
