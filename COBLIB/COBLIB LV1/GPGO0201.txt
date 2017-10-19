@@ -1,0 +1,239 @@
+      *--------------------------------------------------------------*
+       IDENTIFICATION                      DIVISION.
+      *--------------------------------------------------------------*
+       PROGRAM-ID.                         GPGO0201.
+       AUTHOR.                             BRUNO NEVES DE MOURA.
+       DATE-WRITTEN.                       25/01/2016.
+       DATE-COMPILED.                      26/01/2016.
+       SECURITY.                           NENHUMA.
+      ****************************************************************
+      *        DESCRICAO : SIMULACAO DE EMPRESTIMO                   *
+      ****************************************************************
+       ENVIRONMENT                         DIVISION.
+      *--------------------------------------------------------------*
+       CONFIGURATION                       SECTION.
+       SOURCE-COMPUTER.                    L01M05.
+       OBJECT-COMPUTER.                    L01M01.
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA.
+       INPUT-OUTPUT                        SECTION.
+      ****************************************************************
+      * ESTA SECAO (INPUT-OUTPUT) FICARA VAZIA, POIS NAO ESTAMOS     *
+      *          MANIPULANDO ARQUIVOS  NESTE PROJETO.                *
+      ****************************************************************
+       DATA                                DIVISION.
+      *--------------------------------------------------------------*
+       FILE                                SECTION.
+      ****************************************************************
+      * ESTA SECAO (FILE SECTION) NAO SERA UTILIZADA, POIS NAO      *
+      *     ESTAMOS MANIPULANDO ARQUIVOS NESTE PROJETO.             *
+      ************************************************************* **
+       WORKING-STORAGE                     SECTION.
+      ****************************************************************
+      *         VARIAVEIS SIMULACAO DE EMPRSTIMO DA SYSIN            *
+      ****************************************************************
+       01  WS-REG-SYSIN.
+           05  WS-NUM-SIMULACAO             PIC 9(004).
+           05  WS-VAL-EMPRESTIMO            PIC 9(006)V99.
+           05  WS-JUROS                     PIC 9(002)V99.
+           05  WS-QTD-PARCELAS              PIC 9(002).
+      ***************************************************************
+      *       VARIAVEIS                  EDITADAS                   *
+      ***************************************************************
+       77  WS-VAL-EMPRESTIMO-F             PIC ZZZ.ZZ9,99.
+       77  WS-JUROS-F                      PIC Z9,99.
+       77  WS-QTD-PARCELAS-F               PIC Z9.
+       77  WS-VALOR-PARCELA-F              PIC ZZZ.ZZ9,99.
+       77  WS-VALOR-TOTAL-F                PIC Z.ZZZ.ZZ9,99.
+      ****************************************************************
+      *          VARIAVEIS          DE          DATA                  *
+      ****************************************************************
+       01  WS-DATA-SISTEMA.
+           05  WS-ANO                       PIC 9(002).
+           05  WS-MES                       PIC 9(002).
+           05  WS-DIA                       PIC 9(002).
+       01  WS-DATA-JULIANA.
+           05  WS-ANO                       PIC 9(002).
+           05  WS-DIA                       PIC 9(003).
+      ****************************************************************
+      *          VARIAVEIS DE DATA EDITADOS                *
+      ****************************************************************
+       01  WS-DATA-GREGORIANA-1.
+           05  WS-DIA                       PIC 9(002).
+           05  FILLER                       PIC X(001)
+                                                   VALUE "/".
+           05  WS-MES                       PIC 9(002).
+           05  FILLER                       PIC X(003)
+                                                   VALUE "/20".
+           05  WS-ANO                       PIC 9(002).
+       01  WS-DATA-GREGORIANA-2.
+           05  WS-DIA                       PIC 9(002).
+           05  FILLER                       PIC X(004)
+                                                   VALUE " DE ".
+           05  WS-TEXTO-MES                 PIC X(009).
+           05  FILLER                       PIC X(006)
+                                                   VALUE " DE 20".
+           05  WS-ANO                       PIC 9(002).
+       01  WS-DATA-JULIANA-F.
+           05  WS-DIA                       PIC Z9(002).
+           05  FILLER                       PIC X(006)
+                                                   VALUE " DE 20".
+           05  WS-ANO                       PIC 9(2).
+       77  WS-TEXTO-DIA-SEMANA              PIC X(013).
+       77  WS-DIA-SEMANA                    PIC 9(001).
+      ****************************************************************
+      *         VARIAVEIS AUXILIARES USADAS NO PROGRAMA              *
+      ****************************************************************
+       77  WS-VALOR-PARCELA                PIC 9(06)V99.
+       77  WS-VALOR-TOTAL                  PIC 9(07)V99.
+      ****************************************************************
+      *                VARIAVEIS DE ESTATISTICA                      *
+      ****************************************************************
+       77  WS-CTLIDO                       PIC 9(04).
+       77  WS-CTPROC                       PIC 9(04).
+       LINKAGE                             SECTION.
+      ****************************************************************
+      * ESTA SECAO (LINKAGE-SECTION) ESTA VAZIA POIS O PROJETO NAO *
+      * E CHAMADO POR OUTROS PROGRAMAS.                              *
+      ****************************************************************
+       PROCEDURE                           DIVISION.
+      *--------------------------------------------------------------*
+       0000-PRINCIPAL.
+      *--------------------------------------------------------------*
+           PERFORM 1000-INICIALIZAR
+           PERFORM 2000-PROCESSAR
+                   UNTIL WS-REG-SYSIN = ALL "0"
+           PERFORM 3000-TERMINO
+           STOP RUN
+           .
+       1000-INICIALIZAR.
+      *--------------------------------------------------------------*
+           MOVE ZERO                       TO WS-CTLIDO
+                        WS-CTPROC
+           PERFORM 1500-LER-SYSIN
+           .
+       1500-LER-SYSIN.
+      *--------------------------------------------------------------*
+           ACCEPT WS-REG-SYSIN FROM SYSIN
+           IF WS-REG-SYSIN NOT = ZERO
+              COMPUTE WS-CTLIDO = WS-CTLIDO + 1
+           .
+       2000-PROCESSAR.
+      *--------------------------------------------------------------*
+           COMPUTE WS-VALOR-PARCELA =
+                   ( WS-VAL-EMPRESTIMO * WS-JUROS / 100 )
+                   / ( 1 - 1  / ( 1 + WS-JUROS / 100 )
+                   ** WS-QTD-PARCELAS )
+           COMPUTE WS-VALOR-TOTAL = WS-VALOR-PARCELA * WS-QTD-PARCELAS
+           MOVE WS-VAL-EMPRESTIMO          TO WS-VAL-EMPRESTIMO-F
+           MOVE WS-JUROS                   TO WS-JUROS-F
+           MOVE WS-QTD-PARCELAS            TO WS-QTD-PARCELAS-F
+           MOVE WS-VALOR-PARCELA           TO WS-VALOR-PARCELA-F
+           MOVE WS-VALOR-TOTAL             TO WS-VALOR-TOTAL-F
+           DISPLAY "**************************************************"
+           DISPLAY "NUMERO DA SIMULACAO...: " WS-NUM-SIMULACAO
+           DISPLAY "VALOR DO EMPRESTIMO...: R$ " WS-VAL-EMPRESTIMO-F
+           DISPLAY "JUROS.................: " WS-JUROS-F "% A.M."
+           DISPLAY "QTD. DE PARCELAS......: " WS-QTD-PARCELAS-F
+           DISPLAY "VALOR DA PARCELA......: R$ " WS-VALOR-PARCELA-F
+           DISPLAY "VALOR TOTAL...........: R$ " WS-VALOR-TOTAL-F
+           DISPLAY "**************************************************"
+           COMPUTE WS-CTPROC = WS-CTPROC + 1
+           PERFORM 1500-LER-SYSIN
+           .
+       3000-TERMINO.
+      *--------------------------------------------------------------*
+           DISPLAY "**************************************************"
+           DISPLAY "TOTAL DE SIMULACAO LIDAS........: " WS-CTLIDO
+           DISPLAY "TOTAL DE SIMULACOES PROCESSADAS.: " WS-CTPROC
+           DISPLAY "TERMINO NORMAL DE PROCESSAMENTO DO GPGO0201"
+           DISPLAY "**************************************************"
+           PERFORM 9000-IMPRIME-DATA
+           .
+       9000-IMPRIME-DATA.
+           ACCEPT WS-DATA-SISTEMA FROM DATE
+           ACCEPT WS-DATA-JULIANA FROM DAY
+           ACCEPT WS-DIA-SEMANA   FROM DAY-OF-WEEK
+      *
+           MOVE CORRESPONDING WS-DATA-SISTEMA
+                                           TO WS-DATA-GREGORIANA-1
+           MOVE CORR          WS-DATA-SISTEMA
+                                           TO WS-DATA-GREGORIANA-2
+           MOVE CORR          WS-DATA-JULIANA
+                                           TO WS-DATA-JULIANA-F
+      *
+           IF WS-MES OF WS-DATA-SISTEMA EQUAL 01
+              MOVE "JANEIRO"               TO WS-TEXTO-MES
+           END-IF
+           IF WS-MES OF WS-DATA-SISTEMA EQUAL 02
+              MOVE "FEVEREIRO"             TO WS-TEXTO-MES
+           END-IF
+           IF WS-MES OF WS-DATA-SISTEMA EQUAL 03
+              MOVE "MARCO"                 TO WS-TEXTO-MES
+           END-IF
+           IF WS-MES OF WS-DATA-SISTEMA EQUAL 04
+              MOVE "ABRIL"                 TO WS-TEXTO-MES
+           END-IF
+           IF WS-MES OF WS-DATA-SISTEMA EQUAL 05
+              MOVE "MAIO"                  TO WS-TEXTO-MES
+           END-IF
+           IF WS-MES OF WS-DATA-SISTEMA EQUAL 06
+              MOVE "JUNHO"                 TO WS-TEXTO-MES
+           END-IF
+           IF WS-MES OF WS-DATA-SISTEMA EQUAL 07
+              MOVE "JULHO"                 TO WS-TEXTO-MES
+           END-IF
+           IF WS-MES OF WS-DATA-SISTEMA EQUAL 08
+              MOVE "AGOSTO"                TO WS-TEXTO-MES
+           END-IF
+           IF WS-MES OF WS-DATA-SISTEMA EQUAL 09
+              MOVE "SETEMBRO"              TO WS-TEXTO-MES
+           END-IF
+           IF WS-MES OF WS-DATA-SISTEMA EQUAL 10
+              MOVE "OUTUBRO"               TO WS-TEXTO-MES
+           END-IF
+           IF WS-MES OF WS-DATA-SISTEMA EQUAL 11
+              MOVE "NOVEMBRO"              TO WS-TEXTO-MES
+           END-IF
+           IF WS-MES OF WS-DATA-SISTEMA EQUAL 12
+              MOVE "DEZEMBRO"              TO WS-TEXTO-MES
+           END-IF
+      *
+           IF WS-DIA-SEMANA EQUAL 01
+              MOVE "SEGUNDA-FEIRA"         TO WS-TEXTO-DIA-SEMANA
+           END-IF
+           IF WS-DIA-SEMANA EQUAL 02
+              MOVE "TERCA-FEIRA"           TO WS-TEXTO-DIA-SEMANA
+           END-IF
+           IF WS-DIA-SEMANA EQUAL 03
+              MOVE "QUARTA-FEIRA"          TO WS-TEXTO-DIA-SEMANA
+           END-IF
+           IF WS-DIA-SEMANA EQUAL 04
+              MOVE "QUINTA-FEIRA"          TO WS-TEXTO-DIA-SEMANA
+           END-IF
+           IF WS-DIA-SEMANA EQUAL 05
+              MOVE "SEXTA-FEIRA"           TO WS-TEXTO-DIA-SEMANA
+           END-IF
+           IF WS-DIA-SEMANA EQUAL 06
+              MOVE "SABADO"                TO WS-TEXTO-DIA-SEMANA
+           END-IF
+           IF WS-DIA-SEMANA EQUAL 07
+              MOVE "DOMINGO"               TO WS-TEXTO-DIA-SEMANA
+           END-IF
+      *
+           DISPLAY "123456789012345678901234567890"
+           DISPLAY "**************************************************"
+           DISPLAY "*  DATA GREGORIANA 1 - "
+                   WS-DATA-GREGORIANA-1
+                   "                *"
+           DISPLAY "*  DATA GREGORIANA-2 - "
+                   WS-DATA-GREGORIANA-2
+                   "   *"
+           DISPLAY "*  DATA JULIANA      - "
+                   WS-DATA-JULIANA-F
+                   "               *"
+           DISPLAY "*  DIA DA SEMANA     - "
+                   WS-TEXTO-DIA-SEMANA
+                   "             *"
+           DISPLAY "**************************************************"
+           .

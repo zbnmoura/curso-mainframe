@@ -1,0 +1,205 @@
+AZ02MNU  DFHMSD TYPE=DSECT,                                            -
+               MODE=INOUT,                                             -
+               LANG=COBOL,                                             -
+               STORAGE=AUTO,                                           -
+               CTRL=(FREEKB,ALARM,FRSET),                              -
+               TIOAPFX=YES
+*---------------------------------------------------------------------*
+MAPAMNU  DFHMDI SIZE=(24,80),                                          -
+               LINE=1,                                                 -
+               COLUMN=1
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(01,01),                                           -
+               LENGTH=10,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='TERMINAL.:'
+*---------------------------------------------------------------------*
+*--VARIAVELM
+T1TERM   DFHMDF POS=(01,12),                                           -
+               LENGTH=04,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(004)'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(01,33),                                           -
+               LENGTH=11,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='LOJAS BRUNO'
+*---------------------------------------------------------------------*
+*--VARIAVEL
+T1DATA   DFHMDF POS=(01,69),                                           -
+               LENGTH=10,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(010)'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(02,01),                                           -
+               LENGTH=10,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='TRANSACAO:'
+*---------------------------------------------------------------------*
+*--VARIAVEL
+T1TRAN   DFHMDF POS=(02,12),                                           -
+               LENGTH=04,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(004)'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(02,30),                                           -
+               LENGTH=20,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='CADASTRO DE PRODUTOS'
+*---------------------------------------------------------------------*
+*--VARIAVEL--
+T1HORA   DFHMDF POS=(02,71),                                           -
+               LENGTH=08,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(008)'
+*---------------------------------------------------------------------*
+*TRACO * TRACO * TRACO * TRACO * TRACO * TRACO * TRACO * TRACO * TRACO*
+*---------------------------------------------------------------------*
+         DFHMDF POS=(03,01),                                           -
+               LENGTH=78,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='------------------------------------------------
+               -------------------------------'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(04,01),                                           -
+               LENGTH=05,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='TASK:'
+*---------------------------------------------------------------------*
+*--VARIAVEL--
+T1TASK   DFHMDF POS=(04,07),                                           -
+               LENGTH=07,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(007)'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(04,33),                                           -
+               LENGTH=14,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='MENU PRINCIPAL'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(04,72),                                           -
+               LENGTH=05,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='FASE:'
+*---------------------------------------------------------------------*
+*--VARIAVEL--
+T1FASE   DFHMDF POS=(04,78),                                           -
+               LENGTH=01,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(001)'
+*---------------------------------------------------------------------*
+*TRACO * TRACO * TRACO * TRACO * TRACO * TRACO * TRACO * TRACO * TRACO*
+*---------------------------------------------------------------------*
+         DFHMDF POS=(05,01),                                           -
+               LENGTH=78,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='------------------------------------------------
+               -------------------------------'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(07,06),                                           -
+               LENGTH=23,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='VSAM-KSDS           DB2'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(08,06),                                           -
+               LENGTH=29,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='-------------   -------------'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(09,06),                                           -
+               LENGTH=29,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='A - CONSULTAR   F - CONSULTAR'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(10,06),                                           -
+               LENGTH=27,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='B - INCLUIR     F - INCLUIR'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(11,06),                                           -
+               LENGTH=27,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='C - EXCLUIR     H - EXCLUIR'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(12,06),                                           -
+               LENGTH=27,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='D - ALTERAR     I - ALTERAR'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(13,06),                                           -
+               LENGTH=26,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='E - LISTAR      J - LISTAR'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(15,06),                                           -
+               LENGTH=11,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='OPCAO.....:'
+*---------------------------------------------------------------------*
+*--VARIAVEL
+T1OPC    DFHMDF POS=(15,18),                                           -
+               LENGTH=01,                                              -
+               ATTRB=BRT,                                              -
+               PICIN='X(001)',                                         -
+               PICOUT='X(001)'
+*---------------------------------------------------------------------*
+*TRACO * TRACO * TRACO * TRACO * TRACO * TRACO * TRACO * TRACO * TRACO*
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(21,01),                                           -
+               LENGTH=78,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='------------------------------------------------
+               -------------------------------'
+*---------------------------------------------------------------------*
+*--VARIAVEL
+T1USR    DFHMDF POS=(22,01),                                           -
+               LENGTH=06,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(006)'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(22,15),                                           -
+               LENGTH=57,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='TECLAS VALIDAS: ENTER=PROCESSA TELA  PF=SAIR   -
+               PF5=LIMPAR'
+*---------------------------------------------------------------------*
+*TRACO * TRACO * TRACO * TRACO * TRACO * TRACO * TRACO * TRACO * TRACO*
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(23,01),                                           -
+               LENGTH=78,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='------------------------------------------------
+               -------------------------------'
+*---------------------------------------------------------------------*
+*--CONSTANTE
+         DFHMDF POS=(24,01),                                           -
+               LENGTH=09,                                              -
+               ATTRB=(ASKIP,NORM),                                     -
+               INITIAL='MENSAGEM:'
+*---------------------------------------------------------------------*
+*--VARIAVEL--
+T1MSG    DFHMDF POS=(24,11),                                           -
+               LENGTH=60,                                              -
+               ATTRB=(ASKIP,BRT),                                      -
+               PICOUT='X(060)'
+*---------------------------------------------------------------------*
+         DFHMSD TYPE=FINAL
+         END

@@ -1,0 +1,460 @@
+      *----------------------------------------------------------------*
+       IDENTIFICATION                      DIVISION.
+      *----------------------------------------------------------------*
+       PROGRAM-ID.                         GPGO0206.
+       AUTHOR.                             BRUNO NEVES DE MOURA.
+       DATE-WRITTEN.                       08/02/2016.
+       DATE-COMPILED.                      09/02/2016.
+       SECURITY.                           NENHUMA.
+      *----------------------------------------------------------------*
+       ENVIRONMENT                         DIVISION.
+      *----------------------------------------------------------------*
+       CONFIGURATION                       SECTION.
+      *----------------------------------------------------------------*
+       SOURCE-COMPUTER.                    L05L01.
+       OBJECT-COMPUTER.                    L01L01.
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA.
+      *----------------------------------------------------------------*
+       INPUT-OUTPUT                        SECTION.
+      *----------------------------------------------------------------*
+       FILE-CONTROL.
+           SELECT CLIOLD ASSIGN TO UT-S-CLIOLD
+           FILE STATUS IS FS-CLIOLD
+           .
+           SELECT CLIMOV ASSIGN TO UT-S-CLIMOV
+           FILE STATUS IS FS-CLIMOV
+           .
+           SELECT CLINEW ASSIGN TO UT-S-CLINEW
+           FILE STATUS IS FS-CLINEW
+           .
+      *----------------------------------------------------------------*
+       DATA                                DIVISION.
+      *----------------------------------------------------------------*
+       FILE                                SECTION.
+      *----------------------------------------------------------------*
+       FD  CLIOLD
+           LABEL RECORDS IS STANDARD
+           BLOCK CONTAINS 0 RECORDS
+           RECORDING MODE IS F
+           RECORD CONTAINS 80 CHARACTERS
+           DATA RECORD IS REG-CLIOLD
+           .
+       01  REG-CLIOLD                      PIC X(80).
+      *----------------------------------------------------------------*
+       FD  CLIMOV
+           LABEL RECORDS IS STANDARD
+           BLOCK CONTAINS 0 RECORDS
+           RECORDING MODE IS F
+           RECORD CONTAINS 81 CHARACTERS
+           DATA RECORD IS REG-CLIMOV
+           .
+       01  REG-CLIMOV                      PIC X(81).
+      *----------------------------------------------------------------*
+       FD  CLINEW
+           LABEL RECORDS IS STANDARD
+           BLOCK CONTAINS 0 RECORDS
+           RECORDING MODE IS F
+           RECORD CONTAINS 79 CHARACTERS
+           DATA RECORD IS REG-CLIMOV
+           .
+       01  REG-CLINEW                      PIC X(79).
+      *----------------------------------------------------------------*
+      *LINKAGE                             SECTION.
+      *----------------------------------------------------------------*
+       WORKING-STORAGE                     SECTION.
+      *----------------------------------------------------------------*
+      *----------------------------------------------------------------*
+      * VARIAVEIS ESPELHOS E SUAS REDEFINICOES
+      *----------------------------------------------------------------*
+       01  WS-REG-CLIOLD.
+           05  WS-TIPO-REGISTRO-O             PIC X(001).
+           05  FILLER                      PIC X(079).
+       01  WS-REG-CLIOLD-HEADER REDEFINES WS-REG-CLIOLD.
+           05  FILLER                      PIC X(001).
+           05  WS-SIGLA-SYS-O              PIC X(005).
+           05  WS-ANO-MES-REF-O            PIC X(006).
+           05  FILLER                      PIC X(068).
+       01  WS-REG-CLIOLD-DATA REDEFINES WS-REG-CLIOLD.
+           05  FILLER                      PIC X(001).
+           05  WS-CODCLI-O                 PIC X(004).
+           05  WS-NOMECLI-O                PIC X(025).
+           05  WS-ENDCLI-O                 PIC X(030).
+           05  WS-FONECLI-O                PIC X(010).
+           05  WS-TOTALDIVIDA-O            PIC 9(008)V99.
+       01  WS-REG-CLIOLD-TRAILER REDEFINES WS-REG-CLIOLD.
+           05  FILLER                      PIC X(001).
+           05  WS-QTD-REG-O                PIC 9(005).
+           05  WS-FILLER                   PIC X(074).
+      *----------------------------------------------------------------*
+       01  WS-REG-CLIMOV.
+           05  WS-TIPO-REGISTRO-M          PIC X(001).
+           05  FILLER                      PIC X(080).
+       01  WS-REG-CLIMOV-HEADER REDEFINES WS-REG-CLIMOV.
+           05  FILLER                      PIC X(001).
+           05  WS-SIGLA-SYS-M              PIC X(005).
+           05  WS-ANO-MES-REF-M            PIC X(006).
+           05  FILLER                      PIC X(069).
+       01  WS-REG-CLIMOV-DATA REDEFINES WS-REG-CLIMOV.
+           05  FILLER                      PIC X(001).
+           05  WS-CODCLI-M                 PIC X(004).
+           05  WS-NOMECLI-M                PIC X(025).
+           05  WS-ENDCLI-M                 PIC X(030).
+           05  WS-FONECLI-M                PIC X(010).
+           05  WS-TOTALDIVIDA-M            PIC 9(008)V99.
+           05  WS-TIPOMOV-M                PIC X(001).
+       01  WS-REG-CLIMOV-TRAILER REDEFINES WS-REG-CLIMOV.
+           05  FILLER                      PIC X(001).
+           05  WS-QTD-REGISTRO-M           PIC 9(005).
+           05  FILLER                      PIC X(075).
+      *----------------------------------------------------------------*
+       01  WS-REG-CLINEW.
+           05  WS-CODCLI-N                 PIC X(004).
+           05  WS-NOMECLI-N                PIC X(025).
+           05  WS-ENDCLI-N                 PIC X(030).
+           05  WS-FONECLI-N                PIC X(010).
+           05  WS-TOTALDIVIDA-N            PIC 9(008)V99.
+      *----------------------------------------------------------------*
+      * VARIAVEIS DA LINKAGE
+      *----------------------------------------------------------------*
+       01  WS-DADOS-ENVIADOS.
+           05  WS-TOTALDIVIDA              PIC 9(008)V99.
+           05  WS-RESP                     PIC X(001).
+           05  WS-DIVIDACALC               PIC 9(008)V99.
+      *----------------------------------------------------------------*
+      * CONTADORES BINARIOS
+      *----------------------------------------------------------------*
+       77  WS-CTLIDO-OLD                   PIC 9(004) COMP.
+       77  WS-CTLIDO-MOV                   PIC 9(004) COMP.
+       77  WS-CTGRAV-NEW                   PIC 9(004) COMP.
+       77  WS-CT-INCLU                     PIC 9(004) COMP.
+       77  WS-CT-EXCLU                     PIC 9(004) COMP.
+       77  WS-CT-ALTER                     PIC 9(004) COMP.
+       77  WS-CT-CADINVAL                  PIC 9(004) COMP.
+       77  WS-CT-MOVINVAL                  PIC 9(004) COMP.
+      *----------------------------------------------------------------*
+      * CONTADORES COM MASCARA DE EDICAO
+      *----------------------------------------------------------------*
+       77  WS-CTLIDO-OLD-F                 PIC Z(003)9.
+       77  WS-CTLIDO-MOV-F                 PIC Z(003)9.
+       77  WS-CTGRAV-NEW-F                 PIC Z(003)9.
+       77  WS-CT-INCLU-F                   PIC Z(003)9.
+       77  WS-CT-EXCLU-F                   PIC Z(003)9.
+       77  WS-CT-ALTER-F                   PIC Z(003)9.
+       77  WS-CT-CADINVAL-F                PIC Z(003)9.
+       77  WS-CT-MOVINVAL-F                PIC Z(003)9.
+      *----------------------------------------------------------------*
+      * FLAGS DE FILE STATUS
+      *----------------------------------------------------------------*
+       01  FS-CLIOLD                       PIC X(002).
+           88  SUCESSO-O                           VALUE "00".
+           88  FIM-ARQ-O                           VALUE "10".
+       01  FS-CLIMOV                       PIC X(002).
+           88  SUCESSO-M                           VALUE "00".
+           88  FIM-ARQ-M                           VALUE "10".
+       01  FS-CLINEW                       PIC X(002).
+           88  SUCESSO-N                           VALUE "00".
+           88  FIM-ARQ-N                           VALUE "10".
+      *----------------------------------------------------------------*
+      * VARIAVEIS AUXILIARES DE ERRO
+      *----------------------------------------------------------------*
+       77  WS-MSG                          PIC X(060).
+       77  WS-FS                           PIC X(002).
+      *----------------------------------------------------------------*
+      * VARIAVEL PGMAUX02
+      *----------------------------------------------------------------*
+       77  WS-PGM-02                       PIC X(008)
+                                                   VALUE "PGMAUX02".
+      *----------------------------------------------------------------*
+      * VARIAVEIS DA BOOKLIB
+      *----------------------------------------------------------------*
+       COPY VARDATA REPLACING ==::== BY ==WS-==
+       .
+       COPY VARTEMPO REPLACING ==::== BY ==WS-==
+       .
+      *----------------------------------------------------------------*
+       PROCEDURE                           DIVISION.
+      *----------------------------------------------------------------*
+       0000-GPGO0206.
+           PERFORM 1000-INICIALIZAR
+           PERFORM 2000-PROCESSAR
+           UNTIL WS-TIPO-REGISTRO-O = "T"
+           AND WS-TIPO-REGISTRO-M = "T"
+           PERFORM 3000-TERMINO
+           STOP RUN
+           .
+       1000-INICIALIZAR.
+           ACCEPT WS-HORARIO-INICIAL FROM TIME
+           MOVE ZERO                       TO WS-CTLIDO-OLD
+                                              WS-CTLIDO-MOV
+                                              WS-CTGRAV-NEW
+                                              WS-CT-INCLU
+                                              WS-CT-EXCLU
+                                              WS-CT-ALTER
+                                              WS-CT-CADINVAL
+                                              WS-CT-MOVINVAL
+      *----------------------------------------------------------------*
+           OPEN INPUT CLIOLD
+           IF NOT SUCESSO-O
+              MOVE "ERRO NA ABERTURA DE CLIOLD. "
+                                           TO WS-MSG
+              MOVE FS-CLIOLD               TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+      *----------------------------------------------------------------*
+           OPEN INPUT CLIMOV
+           IF NOT SUCESSO-M
+              MOVE "ERRO NA ABERTURA DE CLIMOV. "
+                                           TO WS-MSG
+              MOVE FS-CLIMOV               TO WS-MSG
+              GO TO 9999-ERRO
+           END-IF
+      *----------------------------------------------------------------*
+           OPEN OUTPUT CLINEW
+           IF NOT SUCESSO-N
+              MOVE "ERRO NA GRAVACAO DE CLINEW.  "
+                                           TO WS-MSG
+              MOVE FS-CLINEW               TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+      *----------------------------------------------------------------*
+           PERFORM 1100-LER-CLIOLD
+           IF FIM-ARQ-O
+              MOVE "ERRO NA LEITURA DE CLIOLD. "
+                                           TO WS-MSG
+              MOVE FS-CLIOLD               TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           IF WS-TIPO-REGISTRO-O NOT EQUAL "H"
+              MOVE "CLIOLD NAO TEM HEADER. "
+                                           TO WS-MSG
+              MOVE FS-CLIOLD               TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+      *----------------------------------------------------------------*
+           PERFORM 1100-LER-CLIOLD
+           IF FIM-ARQ-O
+           OR WS-TIPO-REGISTRO-O NOT EQUAL "D"
+              MOVE "CLIOLD NAO TEM DATA. " TO WS-MSG
+              MOVE FS-CLIOLD               TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+      *----------------------------------------------------------------*
+           PERFORM 1200-LER-CLIMOV
+           IF FIM-ARQ-M
+              MOVE "ERRO NA LEITURA DE CLIMOV. "
+                                           TO WS-MSG
+              MOVE FS-CLIMOV               TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           IF WS-TIPO-REGISTRO-M NOT EQUAL "H"
+              MOVE "CLIMOV NAO TEM HEADER. "
+                                           TO WS-MSG
+              MOVE FS-CLIMOV               TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+      *----------------------------------------------------------------*
+           PERFORM 1200-LER-CLIMOV
+           IF FIM-ARQ-M
+           OR WS-TIPO-REGISTRO-M NOT EQUAL "D"
+              MOVE "CLIMOV NAO TEM DATA. "
+                                           TO WS-MSG
+              MOVE FS-CLIMOV               TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           .
+      *----------------------------------------------------------------*
+       1100-LER-CLIOLD.
+           READ CLIOLD INTO WS-REG-CLIOLD
+           IF SUCESSO-O
+           ADD 1 TO WS-CTLIDO-OLD
+           IF WS-TIPO-REGISTRO-O EQUAL "T"
+              MOVE HIGH-VALUES             TO WS-CODCLI-O
+           ELSE
+              IF FIM-ARQ-O
+                 IF WS-CTLIDO-OLD > 0
+                 MOVE "ARQUIVO NAO TEM TRAILER. "
+                                           TO WS-MSG
+                 MOVE FS-CLIOLD            TO WS-FS
+                 GO TO 9999-ERRO
+              ELSE
+                 MOVE "ARQUVIO SEM REGISTRO. "
+                                           TO WS-MSG
+                 MOVE WS-REG-CLIOLD        TO WS-FS
+                 GO TO 9999-ERRO
+              END-IF
+           END-IF
+           .
+       1200-LER-CLIMOV.
+           READ CLIMOV INTO WS-REG-CLIMOV
+           IF SUCESSO-M
+              ADD 1 TO WS-CTLIDO-MOV
+              IF WS-TIPO-REGISTRO-M EQUAL "T"
+                 MOVE HIGH-VALUES          TO WS-CODCLI-M
+              END-IF
+           ELSE
+              IF FIM-ARQ-M
+                 IF WS-CTLIDO-MOV > 0
+                    MOVE "ARQUIVO CLIMOV NAO TEM TRAILER"
+                                           TO WS-MSG
+                    MOVE FS-CLIMOV         TO WS-FS
+                    GO TO 9999-ERRO
+                 ELSE
+                    MOVE "ARQUIVO CLIMOV NAO TEM MOVIMENTACOES. "
+                                           TO WS-MSG
+                    MOVE FS-CLIMOV         TO WS-FS
+                    GO TO 9999-ERRO
+                 END-IF
+              END-IF
+           END-IF
+           .
+       2000-PROCESSAR.
+           IF WS-CODCLI-O < WS-CODCLI-M
+              ADD 1 TO WS-CT-CADINVAL
+              PERFORM 1100-LER-CLIOLD
+           ELSE
+              IF WS-CODCLI-O > WS-CODCLI-M
+                 PERFORM 2100-INCLUIR
+                 PERFORM 1200-LER-CLIMOV
+              ELSE
+                 PERFORM 2200-ALT-EXC
+                 PERFORM 1100-LER-CLIOLD
+                 PERFORM 1200-LER-CLIMOV
+              END-IF
+           END-IF
+           .
+       2100-INCLUIR.
+           IF WS-TIPOMOV-M EQUAL "I"
+              PERFORM 2400-GRAVA-M
+              ADD 1 TO WS-CT-INCLU
+           ELSE
+              ADD 1 TO WS-CT-MOVINVAL
+           END-IF
+           .
+       2200-ALT-EXC.
+           IF WS-TIPOMOV-M EQUAL "A"
+              PERFORM 2300-ALTERAR
+           ELSE
+              IF WS-TIPOMOV-M EQUAL "E"
+                 ADD 1 TO WS-CT-EXCLU
+              ELSE
+                 ADD 1 TO WS-CT-MOVINVAL
+              END-IF
+           END-IF
+           .
+       2300-ALTERAR.
+           MOVE WS-TOTALDIVIDA-O           TO WS-TOTALDIVIDA
+           CALL WS-PGM-02 USING WS-DADOS-ENVIADOS
+           CANCEL WS-PGM-02
+           IF WS-RESP EQUAL "0"
+              MOVE WS-DIVIDACALC           TO WS-TOTALDIVIDA-M
+              ADD 1 TO WS-CT-ALTER
+              PERFORM 2400-GRAVA-M
+              MOVE SPACES TO WS-RESP
+           ELSE
+              ADD 1 TO WS-CT-MOVINVAL
+              ADD 1 TO WS-CT-CADINVAL
+           END-IF
+           .
+       2400-GRAVA-M.
+           MOVE WS-CODCLI-M                TO WS-CODCLI-N
+           IF WS-NOMECLI-M NOT EQUAL SPACES
+              MOVE WS-NOMECLI-M            TO WS-NOMECLI-N
+           ELSE
+              MOVE WS-NOMECLI-O            TO WS-NOMECLI-N
+           END-IF
+      *----------------------------------------------------------------*
+           IF WS-ENDCLI-M NOT EQUAL SPACES
+              MOVE WS-ENDCLI-M             TO WS-ENDCLI-N
+           ELSE
+              MOVE WS-ENDCLI-O             TO WS-ENDCLI-N
+           END-IF
+      *----------------------------------------------------------------*
+           IF WS-FONECLI-M NOT EQUAL SPACES
+              MOVE WS-FONECLI-M            TO WS-FONECLI-N
+           ELSE
+              MOVE WS-FONECLI-O            TO WS-FONECLI-N
+           END-IF
+      *----------------------------------------------------------------*
+           IF WS-TOTALDIVIDA-M IS NUMERIC
+              MOVE WS-TOTALDIVIDA-M        TO WS-TOTALDIVIDA-N
+           ELSE
+              IF WS-RESP NOT EQUAL "0"
+                 MOVE WS-TOTALDIVIDA-M     TO WS-TOTALDIVIDA-N
+              END-IF
+           END-IF
+      *----------------------------------------------------------------*
+           WRITE REG-CLINEW FROM WS-REG-CLINEW
+           IF NOT SUCESSO-N
+              MOVE "ERRO NA GRAVACAO. "   TO WS-MSG
+              MOVE FS-CLINEW              TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+           ADD 1 TO WS-CTGRAV-NEW
+           .
+       3000-TERMINO.
+           PERFORM 9000-IMPRIME-DATA
+           CLOSE CLIOLD
+           IF NOT SUCESSO-O
+              MOVE "ERRO NO FECHAMENTO DE CLIOLD.  "
+                                           TO WS-MSG
+              MOVE FS-CLIOLD               TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+      *----------------------------------------------------------------*
+           CLOSE CLIMOV
+           IF NOT SUCESSO-M
+              MOVE "ERRO NO FECHAMENTO DE CLIMOV. "
+                                           TO WS-MSG
+              MOVE FS-CLIMOV               TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+      *----------------------------------------------------------------*
+           CLOSE CLINEW
+           IF NOT SUCESSO-N
+              MOVE "ERRO NO FECHAMENTO DE CLINEW. "
+                                           TO WS-MSG
+              MOVE FS-CLINEW               TO WS-FS
+              GO TO 9999-ERRO
+           END-IF
+      *----------------------------------------------------------------*
+           ACCEPT WS-HORARIO-FINAL FROM TIME
+           PERFORM 9000-CALCULA-TEMPO-PROC
+           MOVE WS-CTLIDO-OLD              TO WS-CTLIDO-OLD-F
+           MOVE WS-CTLIDO-MOV              TO WS-CTLIDO-MOV-F
+           MOVE WS-CTGRAV-NEW              TO WS-CTGRAV-NEW-F
+           MOVE WS-CT-INCLU                TO WS-CT-INCLU-F
+           MOVE WS-CT-EXCLU                TO WS-CT-EXCLU-F
+           MOVE WS-CT-ALTER                TO WS-CT-ALTER-F
+           MOVE WS-CT-CADINVAL             TO WS-CT-CADINVAL-F
+           MOVE WS-CT-MOVINVAL             TO WS-CT-MOVINVAL-F
+      *----------------------------------------------------------------*
+           DISPLAY "TOTAL DE CADASTROS  LIDOS CLIOLD....: "
+                   WS-CTLIDO-OLD-F
+           DISPLAY "TOTAL DE MOVIMENTOS LIDOS CLIMOV....: "
+                   WS-CTLIDO-MOV-F
+           DISPLAY "TOTAL DE CADASTROS  GRAVADOS CLINEW.: "
+                   WS-CTGRAV-NEW-F
+           DISPLAY "TOTAL DE CADASTROS  INCLUIDOS.......: "
+                   WS-CT-INCLU-F
+           DISPLAY "TOTAL DE CADASTROS  EXCLUIDOS.......: "
+                   WS-CT-EXCLU-F
+           DISPLAY "TOTAL DE CADASTROS  ALTERADOS.......: "
+                   WS-CT-ALTER-F
+           DISPLAY "TOTAL DE CADASTROS  INVALIDOS.......: "
+                   WS-CT-CADINVAL-F
+           DISPLAY "TOTAL DE MOVIMENTOS INVALIDOS.......: "
+                   WS-CT-MOVINVAL-F
+      *----------------------------------------------------------------*
+           DISPLAY "TEMPO TOTAL DE PROCESSAMENTO: "
+                   WS-TEMPO-PROCESSAMENTO-F
+           .
+      *----------------------------------------------------------------*
+      * COPY'S DA BOOKLIB
+      *----------------------------------------------------------------*
+       COPY ROTDATA
+       .
+       COPY ROTERRO
+       .
+       COPY CALCTEMP
+       .

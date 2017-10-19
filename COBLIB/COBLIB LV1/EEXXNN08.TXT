@@ -1,0 +1,274 @@
+      *----------------------------------------------------------------*
+       IDENTIFICATION                      DIVISION.
+      *----------------------------------------------------------------*
+       PROGRAM-ID.                         EEXXNN08.
+       AUTHOR.                             BRUNO NEVES DE MOURA.
+      *----------------------------------------------------------------*
+       ENVIRONMENT                         DIVISION.
+      *----------------------------------------------------------------*
+       CONFIGURATION                       SECTION.
+      *----------------------------------------------------------------*
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA.
+      *----------------------------------------------------------------*
+       INPUT-OUTPUT                        SECTION.
+      *----------------------------------------------------------------*
+       FILE-CONTROL.
+           SELECT CADPRD ASSIGN TO UT-S-CADPRD
+           FILE STATUS IS FS-CADPRD
+           .
+           SELECT VCADPRD ASSIGN TO DA-I-VCADPRD
+           ORGANIZATION IS INDEXED
+           ACCESS MODE IS SEQUENTIAL
+           FILE STATUS IS FS-VCADPRD
+           RECORD KEY IS CODPRD-V
+           .
+      *----------------------------------------------------------------*
+       DATA                                DIVISION.
+      *----------------------------------------------------------------*
+       FILE                                SECTION.
+      *----------------------------------------------------------------*
+       FD  CADPRD
+           LABEL RECORD IS STANDARD
+           BLOCK CONTAINS 0 RECORDS
+           RECORDING MODE IS F
+           RECORD CONTAINS 69 CHARACTERS
+           DATA RECORD IS REG-CADPRD
+           .
+       01  REG-CADPRD.
+           05 CODPRD                       PIC X(004).
+           05 DESCPROD                     PIC X(020).
+           05 UNIDPROD                     PIC X(005).
+           05 LOCALPROD                    PIC X(005).
+           05 QTDEST                       PIC 9(005).
+           05 QTDMAX                       PIC 9(005).
+           05 QTDMIN                       PIC 9(005).
+           05 PRECOCOMPRA                  PIC 9(006)V99.
+           05 PRECOVENDA                   PIC 9(006)V99.
+           05 PERCOMIS                     PIC 9(002)V99.
+      *----------------------------------------------------------------*
+       FD  VCADPRD
+           RECORD CONTAINS 69 CHARACTERS
+           DATA RECORD IS REG-VCADPRD
+           .
+       01  REG-VCADPRD.
+           05 CODPRD-V                     PIC X(004).
+           05 DESCPROD-V                   PIC X(020).
+           05 UNIDPROD-V                   PIC X(005).
+           05 LOCALPROD-V                  PIC X(005).
+           05 QTDEST-V                     PIC 9(005).
+           05 QTDMAX-V                     PIC 9(005).
+           05 QTDMIN-V                     PIC 9(005).
+           05 PRECOCOMPRA-V                PIC 9(006)V99.
+           05 PRECOVENDA-V                 PIC 9(006)V99.
+           05 PERCOMIS-V                   PIC 9(002)V99.
+      *----------------------------------------------------------------*
+       WORKING-STORAGE                     SECTION.
+      *----------------------------------------------------------------*
+      *== VARIAVEIS ESPELHO                                          ==*
+       01 WS-REG-CADPRD.
+           05 WS-CODPRD                    PIC X(004).
+           05 WS-DESCPROD                  PIC X(020).
+           05 WS-UNIDPROD                  PIC X(005).
+           05 WS-LOCALPROD                 PIC X(005).
+           05 WS-QTDEST                    PIC 9(005).
+           05 WS-QTDMAX                    PIC 9(005).
+           05 WS-QTDMIN                    PIC 9(005).
+           05 WS-PRECOCOMPRA               PIC 9(006)V99.
+           05 WS-PRECOVENDA                PIC 9(006)V99.
+           05 WS-PERCOMIS                  PIC 9(002)V99.
+      *
+       01  WS-REG-VCADPRD.
+           05 WS-CODPRD-V                  PIC X(004).
+           05 WS-DESCPROD-V                PIC X(020).
+           05 WS-UNIDPROD-V                PIC X(005).
+           05 WS-LOCALPROD-V               PIC X(005).
+           05 WS-QTDEST-V                  PIC 9(005).
+           05 WS-QTDMAX-V                  PIC 9(005).
+           05 WS-QTDMIN-V                  PIC 9(005).
+           05 WS-PRECOCOMPRA-V             PIC 9(006)V99.
+           05 WS-PRECOVENDA-V              PIC 9(006)V99.
+           05 WS-PERCOMIS-V                PIC 9(002)V99.
+      *----------------------------------------------------------------*
+      *== DATA E HORA DO SISTEMA                                     ==*
+       01  WS-DATE-SYS.
+           05 WS-ANO-SYS                   PIC 9(002).
+           05 WS-MES-SYS                   PIC 9(002).
+           05 WS-DIA-SYS                   PIC 9(002).
+      *
+       01  WS-TIME-SYS.
+           05 WS-HORA-SYS                  PIC 9(002).
+           05 WS-MIN-SYS                   PIC 9(002).
+           05 WS-SEG-SYS                   PIC 9(002).
+           05 FILLER                       PIC X(002).
+      *== DATA E HORA DO SISTEMA FORMATADO
+       01  WS-DATE-F.
+           05 WS-DIA-F                     PIC 9(002).
+           05 FILLER                       PIC X(001)
+                                                   VALUE "/".
+           05 WS-MES-F                     PIC 9(002).
+           05 FILLER                       PIC X(003)
+                                                   VALUE "/20".
+           05 WS-ANO-F                     PIC 9(002).
+      *
+       01  WS-TIME-F.
+           05 WS-HORA-F                    PIC 9(002).
+           05 FILLER                       PIC X(001)
+                                                   VALUE ":".
+           05 WS-MIN-F                     PIC 9(002).
+           05 FILLER                       PIC X(001)
+                                                   VALUE ":".
+           05 WS-SEG-F                     PIC 9(002).
+      *----------------------------------------------------------------*
+      *== FILE STATUS E CONTADORES                                   ==*
+       77  FS-CADPRD                       PIC X(002).
+       77  FS-VCADPRD                      PIC X(002).
+       77  WS-CTLIDO                       PIC 9(003).
+       77  WS-CTGRAV                       PIC 9(003).
+       77  WS-CTDUP                        PIC 9(003).
+       77  WS-CTFORASEQ                    PIC 9(003).
+       77  WS-MSG                          PIC X(060).
+       77  WS-FS                           PIC X(002).
+      *----------------------------------------------------------------*
+       PROCEDURE                           DIVISION.
+      *----------------------------------------------------------------*
+       000-EEXXNN08.
+           PERFORM 999-IMPRIME-DATA-HORA
+           PERFORM 010-INICIALIZAR
+           PERFORM 030-PROCESSAR
+                   UNTIL FS-CADPRD = "10"
+           PERFORM 040-TERMINO
+           PERFORM 999-IMPRIME-DATA-HORA
+           STOP RUN
+           .
+      *----------------------------------------------------------------*
+       010-INICIALIZAR.
+           MOVE 0                          TO WS-CTLIDO
+                                              WS-CTGRAV
+                                              WS-CTDUP
+                                              WS-CTFORASEQ
+           OPEN INPUT CADPRD
+           IF FS-CADPRD NOT EQUAL "00"
+              MOVE "ERRO ABERTURA CADPRD"  TO WS-MSG
+              MOVE FS-CADPRD               TO WS-FS
+              PERFORM 999-ERRO
+           END-IF
+           OPEN OUTPUT VCADPRD
+           IF FS-VCADPRD NOT EQUAL "00"
+              MOVE "ERRO ABERTURA VCADPRD" TO WS-MSG
+              MOVE FS-VCADPRD              TO WS-FS
+              PERFORM 999-ERRO
+           END-IF
+           PERFORM 020-LERCADPRD
+           .
+      *----------------------------------------------------------------*
+       020-LERCADPRD.
+           READ CADPRD INTO WS-REG-CADPRD
+           IF FS-CADPRD = "00"
+              ADD 1 TO WS-CTLIDO
+           ELSE
+              IF FS-CADPRD NOT EQUAL "10"
+                 MOVE "ERRO LEITURA CADPRD"
+                                           TO WS-MSG
+                 MOVE FS-CADPRD            TO WS-FS
+                 PERFORM 999-ERRO
+              END-IF
+           END-IF
+           .
+      *----------------------------------------------------------------*
+       030-PROCESSAR.
+           MOVE WS-REG-CADPRD              TO WS-REG-VCADPRD
+           WRITE REG-VCADPRD FROM WS-REG-VCADPRD
+           EVALUATE FS-VCADPRD
+              WHEN "00"
+                   ADD 1 TO WS-CTGRAV
+              WHEN "21"
+                   ADD 1 TO WS-CTFORASEQ
+              WHEN "22"
+                   ADD 1 TO WS-CTDUP
+              WHEN OTHER
+                   MOVE "ERRO GRAVACAO PRODUTO"
+                                           TO WS-MSG
+                   MOVE FS-VCADPRD         TO WS-FS
+                   PERFORM 999-ERRO
+           END-EVALUATE
+           PERFORM 020-LERCADPRD
+           .
+      *----------------------------------------------------------------*
+       040-TERMINO.
+           DISPLAY "==================================================="
+           DISPLAY "TOTAL DE REGISTROS LIDOS.........: " WS-CTLIDO
+           DISPLAY "TOTAL DE REGISTROS GRAVADOS......: " WS-CTGRAV
+           DISPLAY "TOTAL DE REGISTROS DUPLICADOS....: " WS-CTDUP
+           DISPLAY "TOTAL DE REGISTROS FORA SEQUENCIA: " WS-CTFORASEQ
+           DISPLAY "==================================================="
+           CLOSE CADPRD
+           IF FS-CADPRD NOT EQUAL "00"
+              MOVE "ERRO FECHAMENTO CADPRD"
+                                           TO WS-MSG
+              MOVE FS-CADPRD               TO WS-FS
+              PERFORM 999-ERRO
+           END-IF
+           CLOSE VCADPRD
+           IF FS-VCADPRD NOT EQUAL "00"
+              MOVE "ERRO FECHAMENTO VCADPRD"
+                                           TO WS-MSG
+              MOVE FS-VCADPRD              TO WS-FS
+              PERFORM 999-ERRO
+           END-IF
+           DISPLAY "                                                   "
+           DISPLAY "*-------------------------------------------------*"
+           DISPLAY "                                                   "
+           DISPLAY "                            )/_                    "
+           DISPLAY "                  _.--..---'-,--0_                 "
+           DISPLAY "             \|..'           ._0__)_               "
+           DISPLAY "     ,-.      ./  _  \..--( /                      "
+           DISPLAY "       `\.-''__.-' \ (     \_                      "
+           DISPLAY "         `'''       `\_    /\                      "
+           DISPLAY "                     /)                            "
+           DISPLAY "                                                   "
+           DISPLAY "*-------------------------------------------------*"
+           DISPLAY "* TERMINO NORMAL DO EEXXNN08                      *"
+           DISPLAY "*-------------------------------------------------*"
+           .
+      *----------------------------------------------------------------*
+       999-ERRO.
+           DISPLAY "*-------------------------------------------------*"
+           DISPLAY " MENSAGEM.....: " WS-MSG
+           DISPLAY " FILE STATUS..: " WS-FS
+           DISPLAY "*-------------------------------------------------*"
+           DISPLAY "              ._`-\ )\,`-.-.                       "
+           DISPLAY "             \'\` \)\ \)\ \|.)                     "
+           DISPLAY "           \`)  |\)  )\ .)\ )\|                    "
+           DISPLAY "           \ \)\ |)\  `   \ .')/|                  "
+           DISPLAY "          ``-.\ \    )\ `  . ., '(                 "
+           DISPLAY "          \\ -. `)\``- ._ .)` |\(,_                "
+           DISPLAY "          `__  '\ `-- _\`.       (/                "
+           DISPLAY "            `\,\       .\\         /               "
+           DISPLAY "              '  )  (`-.\\        `                "
+           DISPLAY "                 /||\    `.. * _*|                 "
+           DISPLAY "                           `-.( `\                 "
+           DISPLAY "                               `. \                "
+           DISPLAY "                                `(C                "
+           DISPLAY "*-------------------------------------------------*"
+           STOP RUN
+           .
+      *----------------------------------------------------------------*
+       999-IMPRIME-DATA-HORA.
+           ACCEPT WS-DATE-SYS FROM DATE
+           MOVE WS-ANO-SYS                 TO WS-ANO-F
+           MOVE WS-MES-SYS                 TO WS-MES-F
+           MOVE WS-DIA-SYS                 TO WS-DIA-F
+      *
+           ACCEPT WS-TIME-SYS FROM TIME
+           MOVE WS-HORA-SYS                TO WS-HORA-F
+           MOVE WS-MIN-SYS                 TO WS-MIN-F
+           MOVE WS-SEG-SYS                 TO WS-SEG-F
+      *
+           DISPLAY "*-------------------------------------------------*"
+           DISPLAY " DATA : "
+                   WS-DATE-F
+                   " HORA : "
+                   WS-TIME-F
+           DISPLAY "*-------------------------------------------------*"
+           .
